@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--in a layer-list we can define the objects using the tag item and they will placed on the top of each other-->
+    <!--the last object will be on the top. That's why we should start with the object on the bottom-->
+    <item>
+        <shape
+            android:shape="ring"
+            android:thicknessRatio="12"
+            android:useLevel="false">
+            <solid android:color="@color/light_grey" />
+        </shape>
+    </item>
+    <item>
+        <rotate
+            android:fromDegrees="-90"
+            android:toDegrees="-90">
+            <shape
+                android:shape="ring"
+                android:thicknessRatio="12"
+                android:useLevel="true">
+                <gradient
+                    android:startColor="?attr/colorSecondaryVariant"
+                    android:endColor="?attr/colorPrimary"
+                    android:type="sweep"/>
+
+            </shape>
+        </rotate>
+    </item>
+
+</layer-list>

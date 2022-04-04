@@ -1,0 +1,68 @@
+package com.example.expensesapproom.data.viewmodel
+
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.viewModelScope
+import com.example.expensesapproom.data.db.ExpenseDatabase
+import com.example.expensesapproom.data.entities.ExpenseItem
+import com.example.expensesapproom.data.repository.ExpenseRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+
+class ExpenseViewModel (application: Application): AndroidViewModel(application) {
+
+    //val getAllDataFromSelectedMonth: LiveData<List<ExpenseItem>>
+    //val getAllData: LiveData<List<ExpenseItem>>
+    private val repository: ExpenseRepository
+
+    init {
+        val expenseDao = ExpenseDatabase.getDatabase(application).expenseDao()
+        repository = ExpenseRepository(expenseDao)
+        //getAllData = repository.getAllData
+        //getAllDataFromSelectedMonth = repository.getAllDataFromSelectedMonth
+    }
+
+    fun insert(expenseItem: ExpenseItem){
+        viewModelScope.launch (Dispatchers.IO) {
+            repository.insert(expenseItem)
+        }
+    }
+
+    fun update(expenseItem: ExpenseItem){
+        viewModelScope.launch (Dispatchers.IO) {
+            repository.update(expenseItem)
+        }
+    }
+
+    fun delete(expenseItem: ExpenseItem){
+        viewModelScope.launch (Dispatchers.IO) {
+            repository.delete(expenseItem)
+        }
+    }
+
+    fun getAllData(): LiveData<List<ExpenseItem>>{
+        return repository.getAllData()
+    }
+
+    fun findAExpenseByName(query:String): LiveData<List<ExpenseItem>>{
+        return repository.findAExpenseByName(query)
+    }
+
+    fun getAllDataFromSelectedMonth2(date:String): LiveData<List<ExpenseItem>>{
+        return repository.getAllDataFromSelectedMonth2(date)
+    }
+
+    fun getAllTheAmountsFromSelectedMonth(date: String): LiveData<List<Double>> {
+        return repository.getAllTheAmountsFromSelectedMonth(date)
+    }
+
+    fun getTotalAmountByMonthLive(date: String): LiveData<Double>{
+        return repository.getTotalAmountByMonthLive(date)
+    }
+
+    fun getTotalAmountByMonth(date: String): Double{
+        return repository.getTotalAmountByMonth(date)
+    }
+}
