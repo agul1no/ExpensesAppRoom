@@ -87,7 +87,7 @@ class DashboardFragment : Fragment() {
             isHighlightEnabled = true
             setDrawHighlightIndicators(false)
             setDrawCircles(false)
-            mode = LineDataSet.Mode.CUBIC_BEZIER
+            mode = LineDataSet.Mode.HORIZONTAL_BEZIER
         }
 
         binding.lineChart.data = LineData(_lineDataSet.value)
@@ -116,7 +116,7 @@ class DashboardFragment : Fragment() {
         val _pieDataSet = MutableLiveData(pieDataSet)
         data.add(PieEntry(480f,"Rent"))
         data.add(PieEntry(250f,"Grocery Shopping"))
-        data.add(PieEntry(100f,"Restaurants / Bars"))
+        data.add(PieEntry(100f,"Restaurant"))
         data.add(PieEntry(100f,"Entertainment"))
         data.add(PieEntry(50f,"Clothes"))
         data.add(PieEntry(100f,"Petrol"))
@@ -132,6 +132,7 @@ class DashboardFragment : Fragment() {
         //enable/disable the label of the entries, color of the entries
         binding.pieChart.setDrawEntryLabels(true)
         binding.pieChart.setEntryLabelColor(Color.BLACK)
+        //binding.pieChart.setEntryLabelTextSize(16f)
         // binding.pieChart.setUsePercentValues(true) //don't know exactly what it does
         binding.pieChart.centerText = "Categories"
         binding.pieChart.setCenterTextSize(20f)
@@ -171,8 +172,8 @@ class DashboardFragment : Fragment() {
                 val desiredFormat = SimpleDateFormat("MM-yyyy").format(formattedDate)
                 monthList.add(desiredFormat)
 
-                month = 11
-                year -= year
+                month = 12
+                year--
             }else{
                 val dateToFormat = "${month+1}-$year"
                 val formattedDate = formatter.parse(dateToFormat)

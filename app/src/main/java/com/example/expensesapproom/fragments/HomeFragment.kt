@@ -5,8 +5,8 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
-import android.content.SharedPreferences
-import android.opengl.Visibility
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -17,12 +17,14 @@ import android.widget.*
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.example.expensesapproom.R
+import com.example.expensesapproom.callbacks.SwipeToDeleteCallback
 import com.example.expensesapproom.data.viewmodel.ExpenseViewModel
 import com.example.expensesapproom.data.viewmodelfactory.ExpenseViewModelFactory
 import com.example.expensesapproom.databinding.FragmentHomeBinding
 import com.example.expensesapproom.expenseitemadapter.ExpenseItemAdapter
-import kotlinx.android.synthetic.main.fragment_home.*
 import java.util.*
 import kotlin.math.roundToInt
 
@@ -41,13 +43,13 @@ class HomeFragment : Fragment() {
 
     private var totalAmount : Double = 0.0
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentHomeBinding.inflate(inflater,container,false)
+
         //sharedPref Limit Account
         val sharedPref = requireActivity().getSharedPreferences("limitAmount", Context.MODE_PRIVATE)
         var limitAmount = sharedPref.getInt("limitAmount", 1000)
@@ -79,20 +81,15 @@ class HomeFragment : Fragment() {
         val recyclerView = binding.rvHomeFragment
         recyclerView.adapter = adapter
 
-        // Long Click Listener RV
-        binding.rvHomeFragment.setOnLongClickListener { expenseItem ->
-            val alertDialogBuilder = AlertDialog.Builder(requireContext())
-            alertDialogBuilder.setTitle("Confirm Dialog")
-            alertDialogBuilder.setMessage("Are you sure you want to delete ${expenseItem}?")
-            alertDialogBuilder.setPositiveButton("Yes",DialogInterface.OnClickListener { dialogInterface, i ->
-                Toast.makeText(requireContext(), "item deleted", Toast.LENGTH_SHORT).show()
-            })
-            alertDialogBuilder.setNegativeButton("No", DialogInterface.OnClickListener { dialogInterface, i ->
-                Toast.makeText(requireContext(), "item not deleted", Toast.LENGTH_SHORT).show()
-            })
-            alertDialogBuilder.show()
-            return@setOnLongClickListener true
+        // Swipe to Delete
+        val swipeToDeleteCallback = object : SwipeToDeleteCallback(){
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                swipeToDeleteDialog(viewHolder, expenseViewModel)
+            }
         }
+
+        val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
+        itemTouchHelper.attachToRecyclerView(recyclerView)
 
         //creating and setting the data for the spinner
         var spinnerList = creatingDataForTheSpinner()
@@ -131,6 +128,22 @@ class HomeFragment : Fragment() {
             adapter.setData(expenseItem) })
 
         return binding.root
+    }
+
+    private fun swipeToDeleteDialog(viewHolder: RecyclerView.ViewHolder, expenseViewModel: ExpenseViewModel){
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+        alertDialogBuilder.setTitle("Delete?")
+        alertDialogBuilder.setMessage("Are you sure you want to delete ${adapter.getExpenseAt(viewHolder.adapterPosition).name}?")
+        alertDialogBuilder.setPositiveButton("Yes",
+            DialogInterface.OnClickListener { dialogInterface, i ->
+
+                expenseViewModel.delete(adapter.getExpenseAt(viewHolder.adapterPosition))
+            })
+        alertDialogBuilder.setNegativeButton("No", DialogInterface.OnClickListener { dialogInterface, i ->
+                val position = viewHolder.adapterPosition
+                adapter.notifyItemChanged(position)
+        })
+        alertDialogBuilder.show()
     }
 
     private fun showUpdateLimitDialogAndSetSharedPref() {

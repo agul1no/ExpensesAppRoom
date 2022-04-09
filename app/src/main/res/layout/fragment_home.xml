@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/light_grey"
     tools:context=".fragments.HomeFragment">
 
 
@@ -18,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="280dp"
             android:fitsSystemWindows="true"
-            android:padding="10dp"
+            android:padding="5dp"
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|enterAlways"
             app:toolbarId="@id/toolbarSearchFragment">
@@ -124,9 +123,8 @@
         android:id="@+id/rvHomeFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="10dp"
         android:layout_marginBottom="50dp"
-        android:padding="10dp"
+        android:padding="0dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:listitem="@layout/expense_item">

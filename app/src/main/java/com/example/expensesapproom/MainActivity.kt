@@ -39,16 +39,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-//        supportActionBar?.hide()
-//
-//        if(onBoardingFinished()){
-//            Handler(Looper.getMainLooper()).postDelayed({
-//                //supportActionBar?.show()
-//                binding.bottomNavigationView.visibility = View.VISIBLE
-//            }, 2100)
-//        }else{
-//            supportActionBar?.hide()
-//        }
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
         var navController = navHostFragment.navController
@@ -62,7 +52,6 @@ class MainActivity : AppCompatActivity() {
                 binding.bottomNavigationView.visibility = View.VISIBLE
             }
         }
-//        bottomNavigationView.visibility = View.GONE
 
         //it hides the status bar
         //window.insetsController?.hide(WindowInsets.Type.statusBars())
@@ -74,37 +63,6 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        // Handle action bar item clicks here.
-//        val id = item.getItemId()
-//
-//        if (id == R.id.addIcon) {
-//            //try and catch block. App will try to change to the add fragment no matter in which fragment the user currently is navigating
-//            try {
-//                val navController = findNavController(R.id.fragmentContainerView)
-//                navController.navigate(R.id.action_homeFragment_to_addFragment)
-//                binding.bottomNavigationView.visibility = View.GONE
-//            }catch (e: IllegalArgumentException) {
-//            }
-//
-//            try {
-//                val navController = findNavController(R.id.fragmentContainerView)
-//                navController.navigate(R.id.action_dashboardFragment_to_addFragment)
-//                binding.bottomNavigationView.visibility = View.GONE
-//            }catch (e: IllegalArgumentException) {
-//            }
-//
-//            try {
-//                val navController = findNavController(R.id.fragmentContainerView)
-//                navController.navigate(R.id.action_searchFragment_to_addFragment)
-//                binding.bottomNavigationView.visibility = View.GONE
-//            }catch (e: IllegalArgumentException) {
-//            }
-//            item.setVisible(false)
-//            return true
-//        }
-//        return super.onOptionsItemSelected(item)
-//    }
 
     private fun onBoardingFinished(): Boolean{
         val sharedPref = this.getSharedPreferences("onBoarding", Context.MODE_PRIVATE)
