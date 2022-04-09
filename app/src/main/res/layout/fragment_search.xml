@@ -64,28 +64,43 @@
         android:id="@+id/tvSearchMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Search for a name, date or amount"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="40dp"
-        android:textSize="18sp"
+        android:text="Search for a name, date or amount"
         android:textAlignment="center"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ivSearch" />
+
+    <TextView
+        android:id="@+id/tvNotFoundMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No results found for specified filter criteria"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:layout_marginTop="150dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayoutSearch">
+
+    </TextView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvSearchFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="40dp"
         android:layout_marginStart="6dp"
+        android:layout_marginTop="40dp"
         android:layout_marginEnd="6dp"
+        android:layout_marginBottom="60dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textInputLayoutSearch"
-        tools:listitem="@layout/expense_item"
-        android:layout_marginBottom="60dp"/>
+        tools:listitem="@layout/expense_item" />
 </androidx.constraintlayout.widget.ConstraintLayout>

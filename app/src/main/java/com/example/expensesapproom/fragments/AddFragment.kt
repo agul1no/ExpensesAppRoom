@@ -1,6 +1,9 @@
 package com.example.expensesapproom.fragments
 
+import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -26,7 +29,7 @@ class AddFragment : Fragment() {
     private var _binding: FragmentAddBinding? = null
     private val binding get() = _binding!!
     private lateinit var expenseViewModel: ExpenseViewModel
-    private lateinit var dateForDatabase: String
+    //private lateinit var dateForDatabase: String
     private lateinit var selectedCategory: String
 
     override fun onCreateView(
@@ -53,6 +56,24 @@ class AddFragment : Fragment() {
         }
 
         binding.buttonAdd.setOnClickListener {
+            addForm()
+        }
+
+        nameFocusListener()
+        amountFocusListener()
+
+        return binding.root
+    }
+
+    private fun addForm() {
+        binding.textInputLayoutName.helperText = validName()
+        binding.textInputLayoutAmount.helperText = validAmount()
+
+        val validName = binding.textInputLayoutName.helperText == "required"
+        val validAmount = binding.textInputLayoutAmount.helperText == "required"
+        val validDate = binding.tvDate.text.toString() != "Select a Date"
+
+        if(validName && validAmount && validDate){
             val name = binding.etName.text.toString()
             val amount = binding.etAmount.text.toString().toDouble()
             val comment = binding.etComment.text.toString()
@@ -62,11 +83,56 @@ class AddFragment : Fragment() {
             val expenseItem = ExpenseItem(0,name, amount, comment, date, category)
             expenseViewModel.insert(expenseItem)
             findNavController().navigate(R.id.action_addFragment_to_homeFragment)
-
+        }else{
+            invalidForm()
         }
+    }
 
-        return binding.root
+    private fun invalidForm() {
+        var message = ""
+        if(binding.textInputLayoutName.helperText != "required")
+            message += "\n\nName should at least have 3 characters"
+        if(binding.textInputLayoutAmount.helperText != "required")
+            message += "\n\nThe introduced amount is invalid"
+        if(binding.tvDate.text.toString() == "Select a Date")
+            message += "\n\nPlease select a date"
 
+            val alertDialogBuilder = AlertDialog.Builder(requireContext())
+            //alertDialogBuilder.setTitle("Fill out following fields")
+            alertDialogBuilder.setMessage(message)
+            alertDialogBuilder.setPositiveButton("Yes", DialogInterface.OnClickListener { dialogInterface, i ->
+                dialogInterface.dismiss()
+            })
+            alertDialogBuilder.show()
+    }
+
+
+    private fun amountFocusListener() {
+        binding.etAmount.setOnFocusChangeListener { _, focused ->
+            if(!focused){
+                binding.textInputLayoutName.helperText = validAmount()
+            }
+        }
+    }
+
+    private fun validAmount(): String? {
+        if(binding.etAmount.text.toString().startsWith(".") || binding.etAmount.text.toString().endsWith(".") || binding.etAmount.text.toString().contains("..") || binding.etAmount.text.toString() == ""){
+            return "Invalid Amount"
+        }
+        return "required"
+    }
+
+    private fun nameFocusListener() {
+        binding.etName.setOnFocusChangeListener { _, focused ->
+            if(!focused){
+                binding.textInputLayoutName.helperText = validName()
+            }
+        }
+    }
+
+    private fun validName(): String? {
+        if(binding.etName.text.toString().length < 3){ return "invalid name" }
+        return "required"
     }
 
     private fun datePickerDialog() {

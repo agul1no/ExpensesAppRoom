@@ -82,7 +82,7 @@ class HomeFragment : Fragment() {
         recyclerView.adapter = adapter
 
         // Swipe to Delete
-        val swipeToDeleteCallback = object : SwipeToDeleteCallback(){
+        val swipeToDeleteCallback = object : SwipeToDeleteCallback(requireContext()){
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 swipeToDeleteDialog(viewHolder, expenseViewModel)
             }

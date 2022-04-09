@@ -24,7 +24,7 @@ interface ExpenseDao {
     @Query ("SELECT * FROM expenses_table WHERE expense_name LIKE :query OR expense_date LIKE :query OR expense_amount LIKE :query")
     fun findAExpenseByName(query: String): LiveData<List<ExpenseItem>>
 
-    @Query ("SELECT * FROM expenses_table WHERE expense_date LIKE :date")
+    @Query ("SELECT * FROM expenses_table WHERE expense_date LIKE :date ORDER BY id DESC")
     fun getAllDataFromSelectedMonth2(date:String): LiveData<List<ExpenseItem>>
 
     @Query ("SELECT expense_amount FROM expenses_table WHERE expense_date LIKE :date")

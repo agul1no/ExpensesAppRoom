@@ -7,6 +7,7 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.size
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
@@ -41,6 +42,7 @@ class SearchFragment : Fragment() {
         binding.rvSearchFragment.visibility = View.GONE
         binding.ivSearch.visibility = View.VISIBLE
         binding.tvSearchMessage.visibility = View.VISIBLE
+        binding.tvNotFoundMessage.visibility = View.GONE
 
         //toolbar click listener
         binding.toolbarSearchFragment.setOnMenuItemClickListener {
@@ -72,9 +74,22 @@ class SearchFragment : Fragment() {
         binding.etSearch.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 searchDatabase(s.toString())
-                binding.rvSearchFragment.visibility = View.VISIBLE
-                binding.ivSearch.visibility = View.GONE
-                binding.tvSearchMessage.visibility = View.GONE
+                if(s.toString().isEmpty()){
+                    binding.rvSearchFragment.visibility = View.GONE
+                    binding.ivSearch.visibility = View.VISIBLE
+                    binding.tvSearchMessage.visibility = View.VISIBLE
+                    binding.tvNotFoundMessage.visibility = View.GONE
+                }else{
+                    binding.rvSearchFragment.visibility = View.VISIBLE
+                    binding.ivSearch.visibility = View.GONE
+                    binding.tvSearchMessage.visibility = View.GONE
+                    binding.tvNotFoundMessage.visibility = View.GONE
+                }
+                if(adapter.itemCount == 0){
+                    binding.tvNotFoundMessage.visibility = View.VISIBLE
+                }else{
+                    binding.tvNotFoundMessage.visibility = View.GONE
+                }
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -84,6 +99,14 @@ class SearchFragment : Fragment() {
             }
         })
 
+        binding.textInputLayoutSearch.setEndIconOnClickListener {
+            binding.etSearch.text?.clear()
+            binding.rvSearchFragment.visibility = View.GONE
+            binding.ivSearch.visibility = View.VISIBLE
+            binding.tvSearchMessage.visibility = View.VISIBLE
+            binding.tvNotFoundMessage.visibility = View.GONE
+        }
+
         return binding.root
     }
 
@@ -92,6 +115,7 @@ class SearchFragment : Fragment() {
         binding.rvSearchFragment.visibility = View.GONE
         binding.ivSearch.visibility = View.VISIBLE
         binding.tvSearchMessage.visibility = View.VISIBLE
+        binding.tvNotFoundMessage.visibility = View.GONE
         super.onStart()
     }
 
