@@ -1,11 +1,15 @@
 package com.example.expensesapproom.fragments
 
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.toColor
 import androidx.lifecycle.MutableLiveData
@@ -13,6 +17,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.expensesapproom.R
+import com.example.expensesapproom.TransformingDate
+import com.example.expensesapproom.creatingDataForTheSpinner
 import com.example.expensesapproom.data.viewmodel.ExpenseViewModel
 import com.example.expensesapproom.data.viewmodelfactory.ExpenseViewModelFactory
 import com.example.expensesapproom.databinding.FragmentDashboardBinding
@@ -21,6 +27,7 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
+import com.google.android.material.R.attr.*
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import java.security.KeyStore
 import java.text.SimpleDateFormat
@@ -52,7 +59,7 @@ class DashboardFragment : Fragment() {
         binding.toolbarDashboardFragment.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.addIcon -> {
-                    // Navigate to settings screen
+                    // Navigate to add screen
                     findNavController().navigate(R.id.action_dashboardFragment_to_addFragment)
                     true
                 }
@@ -90,6 +97,12 @@ class DashboardFragment : Fragment() {
             mode = LineDataSet.Mode.HORIZONTAL_BEZIER
         }
 
+        var color = Color.BLACK
+        when (context?.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+            Configuration.UI_MODE_NIGHT_YES -> {color = Color.WHITE}
+            Configuration.UI_MODE_NIGHT_NO -> {color = Color.BLACK}
+            Configuration.UI_MODE_NIGHT_UNDEFINED -> {Color.RED}
+        }
         binding.lineChart.data = LineData(_lineDataSet.value)
         binding.lineChart.apply {
             invalidate()
@@ -99,7 +112,11 @@ class DashboardFragment : Fragment() {
             xAxis.setDrawGridLines(false)
             xAxis.position = XAxis.XAxisPosition.BOTTOM
             xAxis.valueFormatter = IndexAxisValueFormatter(dataXAxis)
+            xAxis.textColor = color
+            xAxis.axisLineColor = color
             axisLeft.setDrawGridLines(false)
+            axisLeft.axisLineColor = color
+            axisLeft.textColor = color
 //            axisLeft.axisMaximum = 10f
 //            axisLeft.axisMinimum = 0f
             setTouchEnabled(false)
@@ -139,6 +156,11 @@ class DashboardFragment : Fragment() {
         //binding.pieChart.centerTextRadiusPercent = 100f // how much space the text in the center occupies
         //binding.pieChart.isInTouchMode
         binding.pieChart.isDragDecelerationEnabled = false
+
+        //creating and setting the data for the spinner
+        var spinnerList = creatingDataForTheSpinner()
+        var arrayAdapter = ArrayAdapter(requireActivity(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,spinnerList)
+        binding.spinnerDashboard.adapter = arrayAdapter
 
         return binding.root
     }

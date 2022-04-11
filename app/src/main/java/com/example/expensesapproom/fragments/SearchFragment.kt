@@ -48,7 +48,7 @@ class SearchFragment : Fragment() {
         binding.toolbarSearchFragment.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.addIcon -> {
-                    // Navigate to settings screen
+                    // Navigate to add screen
                     findNavController().navigate(R.id.action_searchFragment_to_addFragment)
                     true
                 }

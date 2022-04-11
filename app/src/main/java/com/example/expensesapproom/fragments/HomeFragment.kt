@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
+import android.view.ContextMenu
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -43,6 +44,11 @@ class HomeFragment : Fragment() {
 
     private var totalAmount : Double = 0.0
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -50,7 +56,7 @@ class HomeFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentHomeBinding.inflate(inflater,container,false)
 
-        //sharedPref Limit Account
+        //sharedPref Limit Amount
         val sharedPref = requireActivity().getSharedPreferences("limitAmount", Context.MODE_PRIVATE)
         var limitAmount = sharedPref.getInt("limitAmount", 1000)
         binding.tvLimit.text = "Limit: ${limitAmount} €"
@@ -61,7 +67,7 @@ class HomeFragment : Fragment() {
         binding.toolbarHomeFragment.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.addIcon -> {
-                    // Navigate to settings screen
+                    // Navigate to add screen
                     findNavController().navigate(R.id.action_homeFragment_to_addFragment)
                     true
                 }
@@ -355,6 +361,5 @@ class HomeFragment : Fragment() {
         }
         return dateOutput
     }
-
 
 }
