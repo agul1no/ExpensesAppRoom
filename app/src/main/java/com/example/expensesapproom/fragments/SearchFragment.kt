@@ -52,10 +52,6 @@ class SearchFragment : Fragment() {
                     findNavController().navigate(R.id.action_searchFragment_to_addFragment)
                     true
                 }
-//                R.id.action_done -> {
-//                    // Save profile changes
-//                    true
-//                }
                 else -> false
             }
         }
@@ -85,7 +81,7 @@ class SearchFragment : Fragment() {
                     binding.tvSearchMessage.visibility = View.GONE
                     binding.tvNotFoundMessage.visibility = View.GONE
                 }
-                if(adapter.itemCount == 0){
+                if(adapter.itemCount == 0 && s.toString().isNotEmpty()){
                     binding.tvNotFoundMessage.visibility = View.VISIBLE
                 }else{
                     binding.tvNotFoundMessage.visibility = View.GONE

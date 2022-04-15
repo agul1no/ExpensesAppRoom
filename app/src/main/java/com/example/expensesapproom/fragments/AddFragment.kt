@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.expensesapproom.MainActivity
@@ -39,12 +40,17 @@ class AddFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentAddBinding.inflate(inflater,container,false)
 
-        binding.toolbarAddFragment.setTitle("Add a expense")
+        binding.toolbarAddFragment.title = "Add a expense"
+        binding.toolbarAddFragment.navigationIcon = ContextCompat.getDrawable(requireContext(),R.drawable.ic_arrow_back)
 
         expenseViewModel = ViewModelProvider(this).get(ExpenseViewModel::class.java)
 
         binding.tvDate.setOnClickListener {
             datePickerDialog()
+        }
+
+        binding.toolbarAddFragment.setNavigationOnClickListener {
+                    findNavController().navigate(R.id.action_addFragment_to_homeFragment)
         }
 
         //reading input of the spinner

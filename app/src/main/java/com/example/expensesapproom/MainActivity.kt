@@ -51,6 +51,10 @@ class MainActivity : AppCompatActivity() {
             } else {
                 binding.bottomNavigationView.visibility = View.VISIBLE
             }
+
+            if(nd.id == R.id.homeFragment && nd.id == R.id.dashboardFragment && nd.id == R.id.searchFragment){
+                onBackPressed()
+            }
         }
 
         //it hides the status bar
@@ -63,10 +67,9 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-
-    private fun onBoardingFinished(): Boolean{
-        val sharedPref = this.getSharedPreferences("onBoarding", Context.MODE_PRIVATE)
-        return sharedPref.getBoolean("Finished", false)
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finish()
     }
 
 }

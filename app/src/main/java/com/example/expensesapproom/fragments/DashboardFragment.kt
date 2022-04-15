@@ -103,6 +103,12 @@ class DashboardFragment : Fragment() {
             Configuration.UI_MODE_NIGHT_NO -> {color = Color.BLACK}
             Configuration.UI_MODE_NIGHT_UNDEFINED -> {Color.RED}
         }
+
+        if(dataYAxis.sum() == 0.0f){
+            binding.lineChart.axisLeft.axisMaximum = 500f
+            binding.lineChart.axisLeft.axisMinimum = 0f
+        }
+
         binding.lineChart.data = LineData(_lineDataSet.value)
         binding.lineChart.apply {
             invalidate()
