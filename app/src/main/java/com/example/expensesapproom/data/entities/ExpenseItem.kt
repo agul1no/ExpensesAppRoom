@@ -1,10 +1,13 @@
 package com.example.expensesapproom.data.entities
 
+import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.android.parcel.Parcelize
 import java.sql.Date
 
+@Parcelize
 @Entity(tableName = "expenses_table")
 data class ExpenseItem(
     @PrimaryKey(autoGenerate = true)
@@ -19,4 +22,4 @@ data class ExpenseItem(
     var date: String,
     @ColumnInfo(name = "expense_category")
     var category: String
-)
+) : Parcelable

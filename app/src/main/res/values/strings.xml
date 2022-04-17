@@ -5,6 +5,8 @@
     <string name="welcome">Welcome!</string>
     <string name="add">Add</string>
     <string name="select_a_date">Select a date</string>
+    <string name="update">Update</string>
+    <string name="select_a_category">Select a Category</string>
     <string-array name="category">
         <item>Grocery Shopping</item>
         <item>Entertainment</item>

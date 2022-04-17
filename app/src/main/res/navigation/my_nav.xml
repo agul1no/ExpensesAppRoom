@@ -50,6 +50,9 @@
         <action
             android:id="@+id/action_homeFragment_to_addFragment"
             app:destination="@id/addFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_updateFragment"
+            app:destination="@id/updateFragment" />
     </fragment>
     <fragment
         android:id="@+id/dashboardFragment"
@@ -78,6 +81,9 @@
         <action
             android:id="@+id/action_searchFragment_to_addFragment"
             app:destination="@id/addFragment" />
+        <action
+            android:id="@+id/action_searchFragment_to_updateFragment"
+            app:destination="@id/updateFragment" />
     </fragment>
     <fragment
         android:id="@+id/addFragment"
@@ -92,7 +98,17 @@
     </fragment>
     <fragment
         android:id="@+id/updateFragment"
-        android:name="com.example.expensesapproom.UpdateFragment"
+        android:name="com.example.expensesapproom.fragments.UpdateFragment"
         android:label="fragment_update"
-        tools:layout="@layout/fragment_update" />
+        tools:layout="@layout/fragment_update" >
+        <action
+            android:id="@+id/action_updateFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_updateFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
+        <argument
+            android:name="currentExpense"
+            app:argType="com.example.expensesapproom.data.entities.ExpenseItem" />
+    </fragment>
 </navigation>

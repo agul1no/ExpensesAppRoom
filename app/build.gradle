@@ -1,10 +1,12 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 apply plugin: 'kotlin-android-extensions'
 apply plugin: "kotlin-kapt"
+apply plugin: "androidx.navigation.safeargs.kotlin"
 
 android {
     compileSdk 32
@@ -37,6 +39,13 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    sourceSets {
+        main {
+            kotlin {
+                srcDirs += 'build/generated/source/navigation-args/'
+            }
+        }
+    }
 }
 
 dependencies {
@@ -68,4 +77,8 @@ dependencies {
 
     //Recycler View decorator dependency
     implementation 'com.github.xabaras:RecyclerViewSwipeDecorator:1.4'
+
+    def nav_version = "2.4.2"
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 }

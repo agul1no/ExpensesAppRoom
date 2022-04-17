@@ -24,7 +24,7 @@ import com.example.expensesapproom.expenseitemadapter.ExpenseItemAdapter
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_search.*
 
-class SearchFragment : Fragment() {
+class SearchFragment : Fragment(), ExpenseItemAdapter.OnItemCLickListener {
 
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
@@ -59,13 +59,14 @@ class SearchFragment : Fragment() {
         expenseViewModel = ViewModelProvider(requireActivity(),
             ExpenseViewModelFactory(requireActivity().application)
         ).get(ExpenseViewModel::class.java)
-        adapter = ExpenseItemAdapter(expenseViewModel,requireContext())
+        adapter = ExpenseItemAdapter(expenseViewModel,requireContext(),this)
         val recyclerView = binding.rvSearchFragment
         recyclerView.adapter = adapter
 
         expenseViewModel.getAllData().observe(requireActivity()){
             adapter.setData(it)
         }
+
 
         binding.etSearch.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -104,6 +105,10 @@ class SearchFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    override fun onItemCLick(position: Int) {
+
     }
 
     override fun onStart() {

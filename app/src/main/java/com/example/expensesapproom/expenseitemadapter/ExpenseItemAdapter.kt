@@ -18,11 +18,14 @@ import com.example.expensesapproom.data.entities.ExpenseItem
 import com.example.expensesapproom.data.viewmodel.ExpenseViewModel
 import com.example.expensesapproom.databinding.ExpenseItemBinding
 import com.example.expensesapproom.databinding.FragmentHomeBinding
+import com.example.expensesapproom.fragments.HomeFragmentDirections
+import com.github.mikephil.charting.utils.Utils.init
 import kotlinx.coroutines.NonDisposableHandle.parent
 
 class ExpenseItemAdapter(
     private val expenseViewModel: ExpenseViewModel,
-    private var context: Context
+    private var context: Context,
+    private val listener: OnItemCLickListener
 ) : RecyclerView.Adapter<ExpenseItemAdapter.ExpenseViewHolder>() {
 
     private var expenseList = emptyList<ExpenseItem>()
@@ -53,7 +56,10 @@ class ExpenseItemAdapter(
         return expenseList[position]
     }
 
-    class ExpenseViewHolder(private val expenseBiding: ExpenseItemBinding) : RecyclerView.ViewHolder(expenseBiding.root){
+    inner class ExpenseViewHolder(
+        private val expenseBiding: ExpenseItemBinding
+        ) : RecyclerView.ViewHolder(expenseBiding.root), View.OnClickListener{
+
         fun bind(curExpenseItem: ExpenseItem, context: Context,expenseViewModel: ExpenseViewModel){
             expenseBiding.tvName.text = curExpenseItem.name
             expenseBiding.tvAmount.text = "${curExpenseItem.amount} €"
@@ -62,7 +68,16 @@ class ExpenseItemAdapter(
                 showDeleteDialogLongClickListener(curExpenseItem, context, expenseViewModel)
                 return@setOnLongClickListener true
             }
+        }
+        init {
+            expenseBiding.root.setOnClickListener(this)
+        }
 
+        override fun onClick(view: View?) {
+            val position = bindingAdapterPosition
+            if (position != RecyclerView.NO_POSITION){
+                listener.onItemCLick(position)
+            }
         }
 
         private fun showDeleteDialogLongClickListener(curExpenseItem: ExpenseItem, context: Context, expenseViewModel: ExpenseViewModel) {
@@ -77,5 +92,9 @@ class ExpenseItemAdapter(
             })
             alertDialogBuilder.show()
         }
+    }
+
+    interface OnItemCLickListener{
+        fun onItemCLick(position: Int)
     }
 }

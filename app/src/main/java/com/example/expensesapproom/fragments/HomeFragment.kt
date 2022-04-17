@@ -5,11 +5,7 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
-import android.view.ContextMenu
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -30,7 +26,7 @@ import java.lang.NumberFormatException
 import java.util.*
 import kotlin.math.roundToInt
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), ExpenseItemAdapter.OnItemCLickListener {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -84,7 +80,7 @@ class HomeFragment : Fragment() {
 
         //viewModel and Recyclerview initialization
         expenseViewModel = ViewModelProvider(requireActivity(),ExpenseViewModelFactory(requireActivity().application)).get(ExpenseViewModel::class.java)
-        adapter = ExpenseItemAdapter(expenseViewModel,requireContext())
+        adapter = ExpenseItemAdapter(expenseViewModel,requireContext(), this)
         val recyclerView = binding.rvHomeFragment
         recyclerView.adapter = adapter
 
@@ -137,6 +133,13 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
+    // onRecyclerView Item Click Listener
+    override fun onItemCLick(position: Int) {
+        val curExpenseItem = adapter.getExpenseAt(position)
+        val action = HomeFragmentDirections.actionHomeFragmentToUpdateFragment(curExpenseItem)
+        findNavController().navigate(action)
+    }
+
     private fun swipeToDeleteDialog(viewHolder: RecyclerView.ViewHolder, expenseViewModel: ExpenseViewModel){
         val alertDialogBuilder = AlertDialog.Builder(requireContext())
         alertDialogBuilder.setTitle("Delete?")
@@ -157,7 +160,7 @@ class HomeFragment : Fragment() {
         val maxAmountDialog = Dialog(requireContext(),R.style.Theme_Dialog)
         maxAmountDialog.setCancelable(false)
         maxAmountDialog.setContentView(R.layout.dialog_maxamount)
-        val etAmount = maxAmountDialog.findViewById<EditText>(R.id.etAmount)
+        val etAmount = maxAmountDialog.findViewById<EditText>(R.id.etAmountUpdate)
         val updateButton = maxAmountDialog.findViewById<Button>(R.id.updateButton)
         val cancelButton = maxAmountDialog.findViewById<Button>(R.id.cancelButton)
         maxAmountDialog.show()
