@@ -26,6 +26,7 @@ import com.example.expensesapproom.data.viewmodel.ExpenseViewModel
 import com.example.expensesapproom.data.viewmodelfactory.ExpenseViewModelFactory
 import com.example.expensesapproom.databinding.FragmentHomeBinding
 import com.example.expensesapproom.expenseitemadapter.ExpenseItemAdapter
+import java.lang.NumberFormatException
 import java.util.*
 import kotlin.math.roundToInt
 
@@ -153,24 +154,28 @@ class HomeFragment : Fragment() {
     }
 
     private fun showUpdateLimitDialogAndSetSharedPref() {
-        binding.tvLimit.setOnClickListener {
-            val maxAmountDialog = Dialog(requireContext(),R.style.Theme_Dialog)
-            maxAmountDialog.setCancelable(false)
-            maxAmountDialog.setContentView(R.layout.dialog_maxamount)
-            val etAmount = maxAmountDialog.findViewById<EditText>(R.id.etAmount)
-            val updateButton = maxAmountDialog.findViewById<Button>(R.id.updateButton)
-            val cancelButton = maxAmountDialog.findViewById<Button>(R.id.cancelButton)
-            maxAmountDialog.show()
-            //sharedPref Limit Account
-            val sharedPref = requireActivity().getSharedPreferences("limitAmount", Context.MODE_PRIVATE)
-            val editor = sharedPref.edit()
-            var limitAmount: Int
+        val maxAmountDialog = Dialog(requireContext(),R.style.Theme_Dialog)
+        maxAmountDialog.setCancelable(false)
+        maxAmountDialog.setContentView(R.layout.dialog_maxamount)
+        val etAmount = maxAmountDialog.findViewById<EditText>(R.id.etAmount)
+        val updateButton = maxAmountDialog.findViewById<Button>(R.id.updateButton)
+        val cancelButton = maxAmountDialog.findViewById<Button>(R.id.cancelButton)
+        maxAmountDialog.show()
+        //sharedPref Limit Account
+        val sharedPref = requireActivity().getSharedPreferences("limitAmount", Context.MODE_PRIVATE)
+        val editor = sharedPref.edit()
+        var limitAmount: Int
 
-            cancelButton.setOnClickListener {
-                maxAmountDialog.dismiss()
-            }
-            updateButton.setOnClickListener {
+        cancelButton.setOnClickListener {
+            maxAmountDialog.dismiss()
+        }
+        updateButton.setOnClickListener {
+            try{
                 limitAmount = etAmount.text.toString().toInt()
+                if(limitAmount < 100){
+                    limitAmount = 100
+                    throw NumberFormatException()
+                }
                 binding.tvLimit.text = "Limit: $limitAmount €"
                 etAmount.text.clear()
                 settingPercent(itemSelectedOnSpinner)
@@ -179,6 +184,8 @@ class HomeFragment : Fragment() {
                     apply()
                 }
                 maxAmountDialog.dismiss()
+            }catch (e: NumberFormatException){
+                Toast.makeText(requireContext(), "Amount must be bigger than 100 €", Toast.LENGTH_SHORT).show()
             }
         }
     }
