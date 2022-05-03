@@ -32,6 +32,7 @@ import java.lang.NullPointerException
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var navController: NavController
 
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,12 +42,12 @@ class MainActivity : AppCompatActivity() {
 
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
-        var navController = navHostFragment.navController
+        navController = navHostFragment.navController
         binding.bottomNavigationView.setupWithNavController(navController)
         binding.bottomNavigationView.setBackgroundDrawable(ColorDrawable(R.drawable.background_nav_bottom_menu))
 
         navController.addOnDestinationChangedListener { _, nd: NavDestination, _ ->
-            if (nd.id == R.id.addFragment || nd.id == R.id.splashFragment || nd.id == R.id.viewPagerFragment) {
+            if (nd.id == R.id.addFragment || nd.id == R.id.splashFragment || nd.id == R.id.viewPagerFragment || nd.id == R.id.updateFragment) {
                 binding.bottomNavigationView.visibility = View.GONE
             } else {
                 binding.bottomNavigationView.visibility = View.VISIBLE

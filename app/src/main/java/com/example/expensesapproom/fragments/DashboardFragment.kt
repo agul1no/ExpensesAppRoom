@@ -1,7 +1,6 @@
 package com.example.expensesapproom.fragments
 
 import android.content.res.Configuration
-import android.content.res.Resources
 import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -9,27 +8,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.toColor
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.setupWithNavController
 import com.example.expensesapproom.R
 import com.example.expensesapproom.TransformingDate
 import com.example.expensesapproom.creatingDataForTheSpinner
 import com.example.expensesapproom.data.viewmodel.ExpenseViewModel
 import com.example.expensesapproom.data.viewmodelfactory.ExpenseViewModelFactory
 import com.example.expensesapproom.databinding.FragmentDashboardBinding
-import com.example.expensesapproom.databinding.FragmentHomeBinding
+import com.example.expensesapproom.transformingDateFromIntToString
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
-import com.github.mikephil.charting.formatter.ValueFormatter
-import com.google.android.material.R.attr.*
-import kotlinx.android.synthetic.main.fragment_dashboard.*
-import java.security.KeyStore
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -233,36 +224,36 @@ class DashboardFragment : Fragment() {
         return spinnerlist
     }
 
-    private fun transformingDateFromIntToString(month: Int, year: Int): String? {
-        var monthString: String? = null
-        var yearString: String? = null
-        when(month){
-            0 -> monthString = "Jan"
-            1 -> monthString = "Feb"
-            2 -> monthString = "Mar"
-            3 -> monthString = "Apr"
-            4 -> monthString = "Mai"
-            5 -> monthString = "Jun"
-            6 -> monthString = "Jul"
-            7 -> monthString = "Aug"
-            8 -> monthString = "Sep"
-            9 -> monthString = "Oct"
-            10 -> monthString = "Nov"
-            11 -> monthString = "Dec"
-        }
-        when(year){
-            2021 -> yearString = "21"
-            2022 -> yearString = "22"
-            2023 -> yearString = "23"
-            2024 -> yearString = "24"
-            2025 -> yearString = "25"
-            2026 -> yearString = "26"
-            2027 -> yearString = "27"
-            2028 -> yearString = "28"
-            2029 -> yearString = "29"
-            2030 -> yearString = "30"
-        }
-        return "$monthString / $yearString"
-    }
+//    private fun transformingDateFromIntToString(month: Int, year: Int): String? {
+//        var monthString: String? = null
+//        var yearString: String? = null
+//        when(month){
+//            0 -> monthString = "Jan"
+//            1 -> monthString = "Feb"
+//            2 -> monthString = "Mar"
+//            3 -> monthString = "Apr"
+//            4 -> monthString = "Mai"
+//            5 -> monthString = "Jun"
+//            6 -> monthString = "Jul"
+//            7 -> monthString = "Aug"
+//            8 -> monthString = "Sep"
+//            9 -> monthString = "Oct"
+//            10 -> monthString = "Nov"
+//            11 -> monthString = "Dec"
+//        }
+//        when(year){
+//            2021 -> yearString = "21"
+//            2022 -> yearString = "22"
+//            2023 -> yearString = "23"
+//            2024 -> yearString = "24"
+//            2025 -> yearString = "25"
+//            2026 -> yearString = "26"
+//            2027 -> yearString = "27"
+//            2028 -> yearString = "28"
+//            2029 -> yearString = "29"
+//            2030 -> yearString = "30"
+//        }
+//        return "$monthString / $yearString"
+//    }
 
 }

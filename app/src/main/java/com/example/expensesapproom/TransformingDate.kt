@@ -2,8 +2,7 @@ package com.example.expensesapproom
 
 import java.util.*
 
-class TransformingDate {
-
+class TransformingDate () {
 }
 
 fun creatingDataForTheSpinner(): MutableList<String?>{
@@ -56,4 +55,95 @@ fun transformingDateFromIntToString(month: Int, year: Int): String? {
         2030 -> yearString = "30"
     }
     return "$monthString / $yearString"
+}
+
+fun transformingSpinnerInputToEndDate(itemSelectedOnSpinner: String): String{
+    // Jan / 22
+    var month = formattingMonthFromSpinner(itemSelectedOnSpinner)
+    var year = formattingYearFromSpinner(itemSelectedOnSpinner)
+    when(month){
+        "Jan" -> month = "01-31"
+        "Feb" -> month = "02-28"
+        "Mar" -> month = "03-31"
+        "Apr" -> month = "04-30"
+        "Mai" -> month = "05-31"
+        "Jun" -> month = "06-30"
+        "Jul" -> month = "07-31"
+        "Aug" -> month = "08-31"
+        "Sep" -> month = "09-30"
+        "Oct" -> month = "10-31"
+        "Nov" -> month = "11-30"
+        "Dec" -> month = "12-31"
+    }
+    when(year){
+        "21" -> year = "2021"
+        "22" -> year = "2022"
+        "23" -> year = "2023"
+        "24" -> year = "2024"
+        "25" -> year = "2025"
+        "26" -> year = "2026"
+        "27" -> year = "2027"
+        "28" -> year = "2028"
+        "29" -> year = "2029"
+        "30" -> year = "2030"
+    }
+    return "$year-$month"
+}
+
+fun transformingSpinnerInputToStartDate(itemSelectedOnSpinner: String): String{
+    // Jan / 22
+    var month = formattingMonthFromSpinner(itemSelectedOnSpinner)
+    var year = formattingYearFromSpinner(itemSelectedOnSpinner)
+    when(month){
+        "Jan" -> month = "01"
+        "Feb" -> month = "02"
+        "Mar" -> month = "03"
+        "Apr" -> month = "04"
+        "Mai" -> month = "05"
+        "Jun" -> month = "06"
+        "Jul" -> month = "07"
+        "Aug" -> month = "08"
+        "Sep" -> month = "09"
+        "Oct" -> month = "10"
+        "Nov" -> month = "11"
+        "Dec" -> month = "12"
+    }
+    when(year){
+        "21" -> year = "2021"
+        "22" -> year = "2022"
+        "23" -> year = "2023"
+        "24" -> year = "2024"
+        "25" -> year = "2025"
+        "26" -> year = "2026"
+        "27" -> year = "2027"
+        "28" -> year = "2028"
+        "29" -> year = "2029"
+        "30" -> year = "2030"
+    }
+    return "$month-$year"
+}
+
+fun formattingMonthFromSpinner(itemSelectedOnSpinner: String): String {
+    var dateOutput = ""
+    var currentChar: Char
+    var date = itemSelectedOnSpinner
+
+    for(element in 0..2){
+        currentChar = date[element]
+        dateOutput = dateOutput + currentChar.toString()
+    }
+    return dateOutput
+}
+
+fun formattingYearFromSpinner(itemSelectedOnSpinner: String): String {
+    var dateOutput = ""
+    var currentChar: Char
+    var date = itemSelectedOnSpinner
+    //var date = "Jan / 21"
+
+    for(i in date.length-1 downTo 6){
+        currentChar = date[i]
+        dateOutput = currentChar.toString() + dateOutput
+    }
+    return dateOutput
 }
