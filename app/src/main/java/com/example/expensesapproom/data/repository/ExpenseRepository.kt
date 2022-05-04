@@ -45,4 +45,7 @@ class ExpenseRepository (private val expenseDao: ExpenseDao) {
     fun getTotalAmountByMonth(date: String): Double{
         return expenseDao.getTotalAmountByMonth(date)
     }
+    fun getTotalAmountByCategoryAndDate(category: String, date: String): Double{
+        return expenseDao.getTotalAmountByCategoryAndDate(category, date)
+    }
 }

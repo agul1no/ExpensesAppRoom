@@ -9,7 +9,6 @@ import com.example.expensesapproom.data.entities.ExpenseItem
 import com.example.expensesapproom.data.repository.ExpenseRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 class ExpenseViewModel (application: Application): AndroidViewModel(application) {
 
@@ -64,5 +63,9 @@ class ExpenseViewModel (application: Application): AndroidViewModel(application)
 
     fun getTotalAmountByMonth(date: String): Double{
         return repository.getTotalAmountByMonth(date)
+    }
+
+    fun getTotalAmountByCategoryAndDate(category: String, date: String): Double{
+        return repository.getTotalAmountByCategoryAndDate(category, date)
     }
 }

@@ -20,7 +20,6 @@ interface ExpenseDao {
     @Query ("SELECT * FROM expenses_table ORDER BY id ASC")
     fun getAllData(): LiveData<List<ExpenseItem>>
 
-
     @Query ("SELECT * FROM expenses_table WHERE expense_name LIKE :query OR expense_date LIKE :query OR expense_amount LIKE :query")
     fun findAExpenseByName(query: String): LiveData<List<ExpenseItem>>
 
@@ -38,4 +37,7 @@ interface ExpenseDao {
 
     @Query ("SELECT SUM(expense_amount) FROM expenses_table WHERE expense_date LIKE :date")
     fun getTotalAmountByMonth(date:String): Double
+
+    @Query("SELECT SUM(expense_amount) FROM expenses_table WHERE expense_category LIKE :category AND expense_date LIKE :date")
+    fun getTotalAmountByCategoryAndDate(category: String, date: String): Double
 }

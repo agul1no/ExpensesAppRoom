@@ -7,17 +7,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.example.expensesapproom.R
-import com.example.expensesapproom.TransformingDate
-import com.example.expensesapproom.creatingDataForTheSpinner
+import com.example.expensesapproom.*
 import com.example.expensesapproom.data.viewmodel.ExpenseViewModel
 import com.example.expensesapproom.data.viewmodelfactory.ExpenseViewModelFactory
 import com.example.expensesapproom.databinding.FragmentDashboardBinding
-import com.example.expensesapproom.transformingDateFromIntToString
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
@@ -32,6 +30,11 @@ class DashboardFragment : Fragment() {
 
     private lateinit var expenseViewModel: ExpenseViewModel
 
+    private lateinit var itemSelectedOnSpinner: String
+    private val myCalender = Calendar.getInstance()
+    private var year = myCalender.get(Calendar.YEAR)
+    private var month = myCalender.get(Calendar.MONTH)
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -39,10 +42,10 @@ class DashboardFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentDashboardBinding.inflate(inflater,container,false)
 
-        val myCalender = Calendar.getInstance()
-        var year = myCalender.get(Calendar.YEAR)
-        var month = myCalender.get(Calendar.MONTH)
         expenseViewModel = ViewModelProvider(requireActivity(), ExpenseViewModelFactory(requireActivity().application)).get(ExpenseViewModel::class.java)
+
+        itemSelectedOnSpinner = transformingDateFromIntToString(month,year).toString()
+        itemSelectedOnSpinner = transformingSpinnerInputToStartDate(itemSelectedOnSpinner)
 
         binding.toolbarDashboardFragment.setTitle("Dashboard")
 
@@ -62,19 +65,19 @@ class DashboardFragment : Fragment() {
         var dataXAxis: List<String?> = creatingDataForTheXAxis().reversed()  // Apr / 22, Mar / 22, Feb / 22, Jan / 22, Dec / 21
         var dataYAxis: List<Float> = creatingDataForTheYAxis()
 
-        val dayData = mutableListOf<Entry>()
-        dayData.add(Entry(0f,dataYAxis[0])) // 9 Months ago
-        dayData.add(Entry(1f,dataYAxis[1])) // 8 Months ago
-        dayData.add(Entry(2f,dataYAxis[2])) // etc..
-        dayData.add(Entry(3f,dataYAxis[3]))
-        dayData.add(Entry(4f,dataYAxis[4]))
-        dayData.add(Entry(5f,dataYAxis[5]))
-        dayData.add(Entry(6f,dataYAxis[6]))
-        dayData.add(Entry(7f,dataYAxis[7]))
-        dayData.add(Entry(8f,dataYAxis[8]))
-        dayData.add(Entry(9f,dataYAxis[9]))
+        val monthlyData = mutableListOf<Entry>()
+        monthlyData.add(Entry(0f,dataYAxis[0])) // 9 Months ago
+        monthlyData.add(Entry(1f,dataYAxis[1])) // 8 Months ago
+        monthlyData.add(Entry(2f,dataYAxis[2])) // etc..
+        monthlyData.add(Entry(3f,dataYAxis[3]))
+        monthlyData.add(Entry(4f,dataYAxis[4]))
+        monthlyData.add(Entry(5f,dataYAxis[5]))
+        monthlyData.add(Entry(6f,dataYAxis[6]))
+        monthlyData.add(Entry(7f,dataYAxis[7]))
+        monthlyData.add(Entry(8f,dataYAxis[8]))
+        monthlyData.add(Entry(9f,dataYAxis[9]))
 
-        val lineDataSet = LineDataSet(dayData, "monthly Overview")
+        val lineDataSet = LineDataSet(monthlyData, "monthly Overview")
         val _lineDataSet = MutableLiveData(lineDataSet)
 
         _lineDataSet.value = lineDataSet
@@ -125,41 +128,102 @@ class DashboardFragment : Fragment() {
         }
 
         //Creating Pie Chart
-        val data = mutableListOf<PieEntry>()
-        var pieDataSet = PieDataSet(data,"Categories")
-        val _pieDataSet = MutableLiveData(pieDataSet)
-        data.add(PieEntry(480f,"Rent"))
-        data.add(PieEntry(250f,"Grocery Shopping"))
-        data.add(PieEntry(100f,"Restaurant"))
-        data.add(PieEntry(100f,"Entertainment"))
-        data.add(PieEntry(50f,"Clothes"))
-        data.add(PieEntry(100f,"Petrol"))
+//        val totalAmountByCategoryAndMonthData = mutableListOf<PieEntry>()
+//        val listOfDataPieChart = creatingDataForThePieChart()
+//
+//        totalAmountByCategoryAndMonthData.add(PieEntry(listOfDataPieChart[0],"Rent"))
+//        totalAmountByCategoryAndMonthData.add(PieEntry(listOfDataPieChart[1],"Grocery Shopping"))
+//        totalAmountByCategoryAndMonthData.add(PieEntry(listOfDataPieChart[2],"Restaurant"))
+//        totalAmountByCategoryAndMonthData.add(PieEntry(listOfDataPieChart[3],"Entertainment"))
+//        totalAmountByCategoryAndMonthData.add(PieEntry(listOfDataPieChart[4],"Clothes"))
+//        totalAmountByCategoryAndMonthData.add(PieEntry(listOfDataPieChart[5],"Petrol"))
+//
+//        val pieDataSet = PieDataSet(totalAmountByCategoryAndMonthData,"Categories")
+//        val _pieDataSet = MutableLiveData(pieDataSet)
+//
+//        val colorList = mutableListOf<Int>(Color.RED, Color.YELLOW, Color.CYAN, Color.GREEN, Color.MAGENTA, Color.LTGRAY)
+//        pieDataSet.colors = colorList
+//
+//        _pieDataSet.value = pieDataSet
+//
+//
+//        binding.pieChart.data = PieData(_pieDataSet.value)
+//        binding.pieChart.invalidate()
+//        //enable/disable the label of the entries, color of the entries
+//        binding.pieChart.setDrawEntryLabels(true)
+//        binding.pieChart.setEntryLabelColor(Color.BLACK)
+//        //binding.pieChart.setEntryLabelTextSize(16f)
+//        // binding.pieChart.setUsePercentValues(true) //don't know exactly what it does
+//        binding.pieChart.centerText = "Categories"
+//        binding.pieChart.setCenterTextSize(20f)
+//        //binding.pieChart.centerTextRadiusPercent = 100f // how much space the text in the center occupies
+//        //binding.pieChart.isInTouchMode
+//        binding.pieChart.isDragDecelerationEnabled = false
 
-        val colorList = mutableListOf<Int>(Color.RED, Color.YELLOW, Color.CYAN, Color.GREEN, Color.MAGENTA, Color.LTGRAY)
-        pieDataSet.colors = colorList
-
-        _pieDataSet.value = pieDataSet
-
-
-        binding.pieChart.data = PieData(_pieDataSet.value)
-        binding.pieChart.invalidate()
-        //enable/disable the label of the entries, color of the entries
-        binding.pieChart.setDrawEntryLabels(true)
-        binding.pieChart.setEntryLabelColor(Color.BLACK)
-        //binding.pieChart.setEntryLabelTextSize(16f)
-        // binding.pieChart.setUsePercentValues(true) //don't know exactly what it does
-        binding.pieChart.centerText = "Categories"
-        binding.pieChart.setCenterTextSize(20f)
-        //binding.pieChart.centerTextRadiusPercent = 100f // how much space the text in the center occupies
-        //binding.pieChart.isInTouchMode
-        binding.pieChart.isDragDecelerationEnabled = false
-
-        //creating and setting the data for the spinner
+        //creating and setting the data for the spinner Pie Chart
         var spinnerList = creatingDataForTheSpinner()
         var arrayAdapter = ArrayAdapter(requireActivity(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,spinnerList)
         binding.spinnerDashboard.adapter = arrayAdapter
 
+        //reading the info from spinner
+        binding.spinnerDashboard.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(adapterView: AdapterView<*>?, view: View?, position: Int, id: Long) {
+
+                itemSelectedOnSpinner = adapterView?.getItemAtPosition(position).toString()
+                itemSelectedOnSpinner = transformingSpinnerInputToStartDate(itemSelectedOnSpinner)
+                var pieDataSet = updatingPieChartByChangingSpinner()
+                val _pieDataSet = MutableLiveData(pieDataSet)
+                val colorList = mutableListOf<Int>(Color.RED, Color.YELLOW, Color.CYAN, Color.GREEN, Color.MAGENTA, Color.LTGRAY)
+                pieDataSet.colors = colorList
+                _pieDataSet.value = pieDataSet
+                binding.pieChart.data = PieData(_pieDataSet.value)
+                binding.pieChart.invalidate()
+                //enable/disable the label of the entries, color of the entries
+                binding.pieChart.setDrawEntryLabels(true)
+                binding.pieChart.setEntryLabelColor(Color.BLACK)
+                binding.pieChart.centerText = "Categories"
+                binding.pieChart.setCenterTextSize(20f)
+                binding.pieChart.isDragDecelerationEnabled = false
+
+            }
+            override fun onNothingSelected(adapterView: AdapterView<*>?) {
+            }
+        }
+
         return binding.root
+    }
+
+    private fun updatingPieChartByChangingSpinner(): PieDataSet{
+        val totalAmountByCategoryAndMonthData = mutableListOf<PieEntry>()
+        val mapOfDataPieChart = creatingDataForThePieChart()
+
+        for(item in mapOfDataPieChart){
+            totalAmountByCategoryAndMonthData.add(PieEntry(item.key,item.value))
+        }
+
+        val pieDataSet = PieDataSet(totalAmountByCategoryAndMonthData,"Categories")
+        return pieDataSet
+    }
+
+    private fun creatingDataForThePieChart(): Map<Float,String>{
+        var totalAmountMapByCategoryAndDate = mutableMapOf<Float,String>()
+        val listOfCategory = creatingListOfCategories()
+        val queryDate = "%$itemSelectedOnSpinner%"
+
+        for (category in listOfCategory){
+            if(expenseViewModel.getTotalAmountByCategoryAndDate(category,queryDate).toFloat().equals(0.0)){
+                // do nothing
+            }else{
+                totalAmountMapByCategoryAndDate.put(expenseViewModel.getTotalAmountByCategoryAndDate(category,queryDate).toFloat(), category)
+            }
+        }
+
+        return totalAmountMapByCategoryAndDate
+    }
+
+    private fun creatingListOfCategories(): List<String>{
+        val listOfCategories = listOf<String>("Rent","Grocery Shopping","Restaurant","Entertainment","Clothes","Petrol")
+        return listOfCategories
     }
 
     private fun creatingDataForTheYAxis(): MutableList<Float>{
@@ -223,37 +287,5 @@ class DashboardFragment : Fragment() {
         }
         return spinnerlist
     }
-
-//    private fun transformingDateFromIntToString(month: Int, year: Int): String? {
-//        var monthString: String? = null
-//        var yearString: String? = null
-//        when(month){
-//            0 -> monthString = "Jan"
-//            1 -> monthString = "Feb"
-//            2 -> monthString = "Mar"
-//            3 -> monthString = "Apr"
-//            4 -> monthString = "Mai"
-//            5 -> monthString = "Jun"
-//            6 -> monthString = "Jul"
-//            7 -> monthString = "Aug"
-//            8 -> monthString = "Sep"
-//            9 -> monthString = "Oct"
-//            10 -> monthString = "Nov"
-//            11 -> monthString = "Dec"
-//        }
-//        when(year){
-//            2021 -> yearString = "21"
-//            2022 -> yearString = "22"
-//            2023 -> yearString = "23"
-//            2024 -> yearString = "24"
-//            2025 -> yearString = "25"
-//            2026 -> yearString = "26"
-//            2027 -> yearString = "27"
-//            2028 -> yearString = "28"
-//            2029 -> yearString = "29"
-//            2030 -> yearString = "30"
-//        }
-//        return "$monthString / $yearString"
-//    }
 
 }

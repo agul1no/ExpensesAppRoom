@@ -93,7 +93,6 @@ class HomeFragment : Fragment(), ExpenseItemAdapter.OnItemCLickListener {
                 swipeToDeleteDialog(viewHolder, expenseViewModel)
             }
         }
-
         val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
         itemTouchHelper.attachToRecyclerView(recyclerView)
 
