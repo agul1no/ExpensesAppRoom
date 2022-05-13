@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.core.view.size
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -16,6 +17,7 @@ import com.example.expensesapproom.*
 import com.example.expensesapproom.data.viewmodel.ExpenseViewModel
 import com.example.expensesapproom.data.viewmodelfactory.ExpenseViewModelFactory
 import com.example.expensesapproom.databinding.FragmentDashboardBinding
+import com.example.expensesapproom.utils.TransformingDateUtil
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
@@ -44,10 +46,10 @@ class DashboardFragment : Fragment() {
 
         expenseViewModel = ViewModelProvider(requireActivity(), ExpenseViewModelFactory(requireActivity().application)).get(ExpenseViewModel::class.java)
 
-        itemSelectedOnSpinner = transformingDateFromIntToString(month,year).toString()
-        itemSelectedOnSpinner = transformingSpinnerInputToStartDate(itemSelectedOnSpinner)
+        itemSelectedOnSpinner = TransformingDateUtil.transformingDateFromIntToString(month,year).toString()
+        itemSelectedOnSpinner = TransformingDateUtil.transformingSpinnerInputToStartDate(itemSelectedOnSpinner)
 
-        binding.toolbarDashboardFragment.setTitle("Dashboard")
+        binding.toolbarDashboardFragment.title = "Dashboard"
 
         //toolbar click listener
         binding.toolbarDashboardFragment.setOnMenuItemClickListener {
@@ -161,7 +163,7 @@ class DashboardFragment : Fragment() {
 //        binding.pieChart.isDragDecelerationEnabled = false
 
         //creating and setting the data for the spinner Pie Chart
-        var spinnerList = creatingDataForTheSpinner()
+        var spinnerList = TransformingDateUtil.creatingDataForTheSpinner(month,year)
         var arrayAdapter = ArrayAdapter(requireActivity(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,spinnerList)
         binding.spinnerDashboard.adapter = arrayAdapter
 
@@ -170,7 +172,7 @@ class DashboardFragment : Fragment() {
             override fun onItemSelected(adapterView: AdapterView<*>?, view: View?, position: Int, id: Long) {
 
                 itemSelectedOnSpinner = adapterView?.getItemAtPosition(position).toString()
-                itemSelectedOnSpinner = transformingSpinnerInputToStartDate(itemSelectedOnSpinner)
+                itemSelectedOnSpinner = TransformingDateUtil.transformingSpinnerInputToStartDate(itemSelectedOnSpinner)
                 var pieDataSet = updatingPieChartByChangingSpinner()
                 val _pieDataSet = MutableLiveData(pieDataSet)
                 val colorList = mutableListOf<Int>(Color.RED, Color.YELLOW, Color.CYAN, Color.GREEN, Color.MAGENTA, Color.LTGRAY)
@@ -179,14 +181,27 @@ class DashboardFragment : Fragment() {
                 binding.pieChart.data = PieData(_pieDataSet.value)
                 binding.pieChart.invalidate()
                 //enable/disable the label of the entries, color of the entries
-                binding.pieChart.setDrawEntryLabels(true)
+                binding.pieChart.setEntryLabelTextSize(20f)
+                binding.pieChart.setDrawEntryLabels(false)
                 binding.pieChart.setEntryLabelColor(Color.BLACK)
                 binding.pieChart.centerText = "Categories"
                 binding.pieChart.setCenterTextSize(20f)
                 binding.pieChart.isDragDecelerationEnabled = false
 
+                binding.pieChart.description.isEnabled = false
+                binding.pieChart.legend.textSize = 14f
+                when (context?.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+                    Configuration.UI_MODE_NIGHT_YES -> {binding.pieChart.legend.textColor =  Color.WHITE}
+                    Configuration.UI_MODE_NIGHT_NO -> {binding.pieChart.legend.textColor = Color.BLACK}
+                    Configuration.UI_MODE_NIGHT_UNDEFINED -> {binding.pieChart.legend.textColor = Color.BLACK}
+                }
+                binding.pieChart.legend.isWordWrapEnabled = true
+                binding.pieChart.legend.verticalAlignment
+                binding.pieChart.legend.xEntrySpace = 36f
+                binding.pieChart.legend.yEntrySpace = 36f
             }
             override fun onNothingSelected(adapterView: AdapterView<*>?) {
+                // blank override. There is always something selected
             }
         }
 
@@ -277,11 +292,11 @@ class DashboardFragment : Fragment() {
         var spinnerlist = mutableListOf<String?>()
         for (i in 0..9){
             if(month == 0){
-                spinnerlist.add(transformingDateFromIntToString(month,year))
+                spinnerlist.add(TransformingDateUtil.transformingDateFromIntToString(month,year))
                 month = 12
                 year -= 1
             }else{
-                spinnerlist.add(transformingDateFromIntToString(month,year))
+                spinnerlist.add(TransformingDateUtil.transformingDateFromIntToString(month,year))
             }
             month -= 1
         }

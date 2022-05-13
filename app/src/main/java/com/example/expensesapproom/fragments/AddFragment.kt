@@ -106,7 +106,7 @@ class AddFragment : Fragment() {
             val alertDialogBuilder = AlertDialog.Builder(requireContext())
             //alertDialogBuilder.setTitle("Fill out following fields")
             alertDialogBuilder.setMessage(message)
-            alertDialogBuilder.setPositiveButton("Yes", DialogInterface.OnClickListener { dialogInterface, i ->
+            alertDialogBuilder.setPositiveButton("Ok", DialogInterface.OnClickListener { dialogInterface, i ->
                 dialogInterface.dismiss()
             })
             alertDialogBuilder.show()

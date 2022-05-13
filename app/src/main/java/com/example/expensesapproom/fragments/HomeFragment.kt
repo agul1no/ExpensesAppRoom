@@ -18,13 +18,11 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.expensesapproom.R
 import com.example.expensesapproom.callbacks.SwipeToDeleteCallback
-import com.example.expensesapproom.creatingDataForTheSpinner
 import com.example.expensesapproom.data.viewmodel.ExpenseViewModel
 import com.example.expensesapproom.data.viewmodelfactory.ExpenseViewModelFactory
 import com.example.expensesapproom.databinding.FragmentHomeBinding
 import com.example.expensesapproom.expenseitemadapter.ExpenseItemAdapter
-import com.example.expensesapproom.transformingDateFromIntToString
-import com.example.expensesapproom.transformingSpinnerInputToStartDate
+import com.example.expensesapproom.utils.TransformingDateUtil
 import java.lang.NumberFormatException
 import java.util.*
 import kotlin.math.roundToInt
@@ -61,7 +59,7 @@ class HomeFragment : Fragment(), ExpenseItemAdapter.OnItemCLickListener {
         var limitAmount = sharedPref.getInt("limitAmount", 1000)
         binding.tvLimit.text = "Limit: ${limitAmount} €"
 
-        itemSelectedOnSpinner = transformingDateFromIntToString(month,year).toString()
+        itemSelectedOnSpinner = TransformingDateUtil.transformingDateFromIntToString(month,year).toString()
 
         //toolbar click listener
         binding.toolbarHomeFragment.setOnMenuItemClickListener {
@@ -97,7 +95,7 @@ class HomeFragment : Fragment(), ExpenseItemAdapter.OnItemCLickListener {
         itemTouchHelper.attachToRecyclerView(recyclerView)
 
         //creating and setting the data for the spinner
-        var spinnerList = creatingDataForTheSpinner()
+        var spinnerList = TransformingDateUtil.creatingDataForTheSpinner(month,year)
         var arrayAdapter = ArrayAdapter(requireActivity(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,spinnerList)
         binding.spinnerHomeFragment.adapter = arrayAdapter
 
@@ -106,7 +104,7 @@ class HomeFragment : Fragment(), ExpenseItemAdapter.OnItemCLickListener {
             override fun onItemSelected(adapterView: AdapterView<*>?, view: View?, position: Int, id: Long) {
 
                 itemSelectedOnSpinner = adapterView?.getItemAtPosition(position).toString()
-                itemSelectedOnSpinner = transformingSpinnerInputToStartDate(itemSelectedOnSpinner)
+                itemSelectedOnSpinner = TransformingDateUtil.transformingSpinnerInputToStartDate(itemSelectedOnSpinner)
                 //Log.d("itemSelectedOnSpinner", itemSelectedOnSpinner)
                 searchDatabaseWithSpinnerInput(itemSelectedOnSpinner)
                 val query = "%$itemSelectedOnSpinner%"
@@ -126,6 +124,7 @@ class HomeFragment : Fragment(), ExpenseItemAdapter.OnItemCLickListener {
                 })
             }
             override fun onNothingSelected(adapterView: AdapterView<*>?) {
+                // left empty because it is not going to be used or needed
             }
         }
 

@@ -90,9 +90,11 @@ class SearchFragment : Fragment(), ExpenseItemAdapter.OnItemCLickListener {
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // left empty because it is not going to be used or needed
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // left empty because it is not going to be used or needed
             }
         })
 
@@ -108,7 +110,7 @@ class SearchFragment : Fragment(), ExpenseItemAdapter.OnItemCLickListener {
     }
 
     override fun onItemCLick(position: Int) {
-
+        // left empty because it is not going to be used or needed
     }
 
     override fun onStart() {
