@@ -5,8 +5,10 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
@@ -35,16 +37,12 @@ class HomeFragment : Fragment(), ExpenseItemAdapter.OnItemCLickListener {
     private lateinit var adapter: ExpenseItemAdapter
 
     private lateinit var itemSelectedOnSpinner: String
+
     private val myCalender = Calendar.getInstance()
     private var year = myCalender.get(Calendar.YEAR)
     private var month = myCalender.get(Calendar.MONTH)
 
     private var totalAmount : Double = 0.0
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,36 +51,23 @@ class HomeFragment : Fragment(), ExpenseItemAdapter.OnItemCLickListener {
         // Inflate the layout for this fragment
         _binding = FragmentHomeBinding.inflate(inflater,container,false)
 
-        //sharedPref Limit Amount
-        val sharedPref = requireActivity().getSharedPreferences("limitAmount", Context.MODE_PRIVATE)
-        var limitAmount = sharedPref.getInt("limitAmount", 1000)
-        binding.tvLimit.text = "Limit: ${limitAmount} €"
+        val limitAmount = initializingSharedPref()
+        binding.tvLimit.text = "Limit: $limitAmount €"
 
         itemSelectedOnSpinner = TransformingDateUtil.transformingDateFromIntToString(month,year).toString()
 
-        //toolbar click listener
-        binding.toolbarHomeFragment.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.addIcon -> {
-                    // Navigate to add screen
-                    findNavController().navigate(R.id.action_homeFragment_to_addFragment)
-                    true
-                }
-
-                else -> false
-            }
+        //toolbar click listener add Button
+        binding.toolbarHomeFragment.setOnMenuItemClickListener { menuItem ->
+            navigateToAddFragment(menuItem)
         }
 
-        //tvLimit Click listener
         binding.tvLimit.setOnClickListener {
             showUpdateLimitDialogAndSetSharedPref()
         }
 
-        //viewModel and Recyclerview initialization
         expenseViewModel = ViewModelProvider(requireActivity(),ExpenseViewModelFactory(requireActivity().application)).get(ExpenseViewModel::class.java)
-        adapter = ExpenseItemAdapter(expenseViewModel,requireContext(), this)
-        val recyclerView = binding.rvHomeFragment
-        recyclerView.adapter = adapter
+
+        val recyclerView = initializingRecyclerView(expenseViewModel)
 
         // Swipe to Delete
         val swipeToDeleteCallback = object : SwipeToDeleteCallback(requireContext()){
@@ -93,10 +78,10 @@ class HomeFragment : Fragment(), ExpenseItemAdapter.OnItemCLickListener {
         val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
         itemTouchHelper.attachToRecyclerView(recyclerView)
 
-        //creating and setting the data for the spinner
-        var spinnerList = TransformingDateUtil.creatingDataForTheSpinner(month,year)
-        var arrayAdapter = ArrayAdapter(requireActivity(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,spinnerList)
-        binding.spinnerHomeFragment.adapter = arrayAdapter
+        creatingTheDataForTheSpinner()
+//        val spinnerList = TransformingDateUtil.creatingDataForTheSpinner(month,year)
+//        val arrayAdapter = ArrayAdapter(requireActivity(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,spinnerList)
+//        binding.spinnerHomeFragment.adapter = arrayAdapter
 
         //reading the info from spinner
         binding.spinnerHomeFragment.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
@@ -133,6 +118,31 @@ class HomeFragment : Fragment(), ExpenseItemAdapter.OnItemCLickListener {
         return binding.root
     }
 
+    private fun navigateToAddFragment (menuItem: MenuItem) : Boolean{
+        when (menuItem.itemId) {
+            R.id.addIcon -> {
+                // Navigate to add screen
+                findNavController().navigate(R.id.action_homeFragment_to_addFragment)
+                return true
+            }
+
+            else -> return false
+        }
+    }
+
+    private fun initializingRecyclerView(expenseViewModel: ExpenseViewModel) : RecyclerView?{
+        adapter = ExpenseItemAdapter(expenseViewModel,requireContext(), this)
+        val recyclerView = binding.rvHomeFragment
+        recyclerView.adapter = adapter
+        return recyclerView
+    }
+
+    private fun creatingTheDataForTheSpinner(){
+        val spinnerList = TransformingDateUtil.creatingDataForTheSpinner(month,year)
+        val arrayAdapter = ArrayAdapter(requireActivity(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,spinnerList)
+        binding.spinnerHomeFragment.adapter = arrayAdapter
+    }
+
     // onRecyclerView Item Click Listener
     override fun onItemCLick(position: Int) {
         val curExpenseItem = adapter.getExpenseAt(position)
@@ -154,6 +164,16 @@ class HomeFragment : Fragment(), ExpenseItemAdapter.OnItemCLickListener {
                 adapter.notifyItemChanged(position)
         })
         alertDialogBuilder.show()
+    }
+
+    private fun initializingSharedPref(): Int {
+        val sharedPref = requireActivity().getSharedPreferences("limitAmount", Context.MODE_PRIVATE)
+        return sharedPref.getInt("limitAmount", 1000)
+    }
+
+    private fun editingSharedPref(): SharedPreferences.Editor {
+        val sharedPref = requireActivity().getSharedPreferences("limitAmount", Context.MODE_PRIVATE)
+        return sharedPref.edit()
     }
 
     private fun showUpdateLimitDialogAndSetSharedPref() {
