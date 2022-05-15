@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import androidx.core.view.size
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -47,7 +46,7 @@ class DashboardFragment : Fragment() {
         expenseViewModel = ViewModelProvider(requireActivity(), ExpenseViewModelFactory(requireActivity().application)).get(ExpenseViewModel::class.java)
 
         itemSelectedOnSpinner = TransformingDateUtil.transformingDateFromIntToString(month,year).toString()
-        itemSelectedOnSpinner = TransformingDateUtil.transformingSpinnerInputToStartDate(itemSelectedOnSpinner)
+        itemSelectedOnSpinner = TransformingDateUtil.transformingSpinnerInputToDate(itemSelectedOnSpinner)
 
         binding.toolbarDashboardFragment.title = "Dashboard"
 
@@ -172,7 +171,7 @@ class DashboardFragment : Fragment() {
             override fun onItemSelected(adapterView: AdapterView<*>?, view: View?, position: Int, id: Long) {
 
                 itemSelectedOnSpinner = adapterView?.getItemAtPosition(position).toString()
-                itemSelectedOnSpinner = TransformingDateUtil.transformingSpinnerInputToStartDate(itemSelectedOnSpinner)
+                itemSelectedOnSpinner = TransformingDateUtil.transformingSpinnerInputToDate(itemSelectedOnSpinner)
                 var pieDataSet = updatingPieChartByChangingSpinner()
                 val _pieDataSet = MutableLiveData(pieDataSet)
                 val colorList = mutableListOf<Int>(Color.RED, Color.YELLOW, Color.CYAN, Color.GREEN, Color.MAGENTA, Color.LTGRAY)

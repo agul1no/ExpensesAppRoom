@@ -6,11 +6,11 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -23,7 +23,6 @@ import com.example.expensesapproom.data.viewmodelfactory.ExpenseViewModelFactory
 import com.example.expensesapproom.databinding.FragmentHomeBinding
 import com.example.expensesapproom.expenseitemadapter.ExpenseItemAdapter
 import com.example.expensesapproom.utils.TransformingDateUtil
-import java.lang.NumberFormatException
 import java.util.*
 import kotlin.math.roundToInt
 
@@ -104,7 +103,7 @@ class HomeFragment : Fragment(), ExpenseItemAdapter.OnItemCLickListener {
             override fun onItemSelected(adapterView: AdapterView<*>?, view: View?, position: Int, id: Long) {
 
                 itemSelectedOnSpinner = adapterView?.getItemAtPosition(position).toString()
-                itemSelectedOnSpinner = TransformingDateUtil.transformingSpinnerInputToStartDate(itemSelectedOnSpinner)
+                itemSelectedOnSpinner = TransformingDateUtil.transformingSpinnerInputToDate(itemSelectedOnSpinner)
                 //Log.d("itemSelectedOnSpinner", itemSelectedOnSpinner)
                 searchDatabaseWithSpinnerInput(itemSelectedOnSpinner)
                 val query = "%$itemSelectedOnSpinner%"

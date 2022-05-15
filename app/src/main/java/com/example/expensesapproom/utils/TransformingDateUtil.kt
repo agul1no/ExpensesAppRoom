@@ -5,22 +5,18 @@ class TransformingDateUtil () {
     companion object{
 
         fun creatingDataForTheSpinner(month: Int, year: Int): MutableList<String?>{
-            /** Creating the mutableListOf Month/Year **/
-//            val calendar = Calendar.getInstance()
-//            var month = (calendar.get(Calendar.MONTH)) /** January = 0, February = 1 etc... **/
-//            var year = calendar.get(Calendar.YEAR)
             var monthCounter = month
             var yearCounter = year
             var spinnerlist = mutableListOf<String?>()
             for (i in 0..5){
-                if(month == 0){
+                if(monthCounter == 0){
                     spinnerlist.add(transformingDateFromIntToString(monthCounter,yearCounter))
                     monthCounter = 12
-                    yearCounter -= 1
+                    yearCounter --
                 }else{
                     spinnerlist.add(transformingDateFromIntToString(monthCounter,yearCounter))
                 }
-                monthCounter -= 1
+                monthCounter --
             }
             return spinnerlist
         }
@@ -42,63 +38,19 @@ class TransformingDateUtil () {
                 10 -> monthString = "Nov"
                 11 -> monthString = "Dec"
             }
+            // 2021
             val yearStringIterator = year.toString()
             var yearString = ""
-            for (char in yearStringIterator.last() downTo yearStringIterator.last() - 1) {
-                yearString += char.toString()
+            for (i in yearStringIterator.length -1 downTo yearStringIterator.length-2) {
+                yearString = yearStringIterator[i].toString() + yearString
             }
-//            when (year) {
-//                2021 -> yearStringIterator = "21"
-//                2022 -> yearStringIterator = "22"
-//                2023 -> yearStringIterator = "23"
-//                2024 -> yearStringIterator = "24"
-//                2025 -> yearStringIterator = "25"
-//                2026 -> yearStringIterator = "26"
-//                2027 -> yearStringIterator = "27"
-//                2028 -> yearStringIterator = "28"
-//                2029 -> yearStringIterator = "29"
-//                2030 -> yearStringIterator = "30"
-//            }
-            return "$monthString / $yearStringIterator"
+            return "$monthString / $yearString"
         }
 
-        fun transformingSpinnerInputToEndDate(itemSelectedOnSpinner: String): String{
-            // Jan / 22
+        fun transformingSpinnerInputToDate(itemSelectedOnSpinner: String): String{
             var month = formattingMonthFromSpinner(itemSelectedOnSpinner)
-            var year = formattingYearFromSpinner(itemSelectedOnSpinner)
-            when(month){
-                "Jan" -> month = "01-31"
-                "Feb" -> month = "02-28"
-                "Mar" -> month = "03-31"
-                "Apr" -> month = "04-30"
-                "Mai" -> month = "05-31"
-                "Jun" -> month = "06-30"
-                "Jul" -> month = "07-31"
-                "Aug" -> month = "08-31"
-                "Sep" -> month = "09-30"
-                "Oct" -> month = "10-31"
-                "Nov" -> month = "11-30"
-                "Dec" -> month = "12-31"
-            }
-            when(year){
-                "21" -> year = "2021"
-                "22" -> year = "2022"
-                "23" -> year = "2023"
-                "24" -> year = "2024"
-                "25" -> year = "2025"
-                "26" -> year = "2026"
-                "27" -> year = "2027"
-                "28" -> year = "2028"
-                "29" -> year = "2029"
-                "30" -> year = "2030"
-            }
-            return "$year-$month"
-        }
-
-        fun transformingSpinnerInputToStartDate(itemSelectedOnSpinner: String): String{
-            // Jan / 22
-            var month = formattingMonthFromSpinner(itemSelectedOnSpinner)
-            var year = formattingYearFromSpinner(itemSelectedOnSpinner)
+            val yearIterator = formattingYearFromSpinner(itemSelectedOnSpinner)
+            var year = ""
             when(month){
                 "Jan" -> month = "01"
                 "Feb" -> month = "02"
@@ -113,18 +65,12 @@ class TransformingDateUtil () {
                 "Nov" -> month = "11"
                 "Dec" -> month = "12"
             }
-            when(year){
-                "21" -> year = "2021"
-                "22" -> year = "2022"
-                "23" -> year = "2023"
-                "24" -> year = "2024"
-                "25" -> year = "2025"
-                "26" -> year = "2026"
-                "27" -> year = "2027"
-                "28" -> year = "2028"
-                "29" -> year = "2029"
-                "30" -> year = "2030"
+
+            for (i in yearIterator.length -1 downTo yearIterator.length-2) {
+                year = yearIterator[i].toString() + year
             }
+            year = "20$year"
+
             return "$month-$year"
         }
 
@@ -135,7 +81,7 @@ class TransformingDateUtil () {
 
             for(element in 0..2){
                 currentChar = date[element]
-                dateOutput = dateOutput + currentChar.toString()
+                dateOutput += currentChar.toString()
             }
             return dateOutput
         }
