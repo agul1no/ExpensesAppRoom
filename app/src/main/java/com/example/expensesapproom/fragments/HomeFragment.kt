@@ -166,7 +166,7 @@ class HomeFragment : Fragment(), ExpenseItemAdapter.OnItemCLickListener {
         alertDialogBuilder.show()
     }
 
-    private fun initializingSharedPref(): Int {
+    fun initializingSharedPref(): Int {
         val sharedPref = requireActivity().getSharedPreferences("limitAmount", Context.MODE_PRIVATE)
         return sharedPref.getInt("limitAmount", 1000)
     }
