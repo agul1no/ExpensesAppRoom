@@ -45,16 +45,12 @@ class ExpenseViewModel (application: Application): AndroidViewModel(application)
         return repository.getAllData()
     }
 
-    fun findAExpenseByName(query:String): LiveData<List<ExpenseItem>>{
-        return repository.findAExpenseByName(query)
+    fun findAExpenseByNameDateOrAmount(query:String): LiveData<List<ExpenseItem>>{
+        return repository.findAExpenseByNameDateOrAmount(query)
     }
 
-    fun getAllDataFromSelectedMonth2(date:String): LiveData<List<ExpenseItem>>{
-        return repository.getAllDataFromSelectedMonth2(date)
-    }
-
-    fun getAllTheAmountsFromSelectedMonth(date: String): LiveData<List<Double>> {
-        return repository.getAllTheAmountsFromSelectedMonth(date)
+    fun getAllDataFromSelectedMonth(date:String): LiveData<List<ExpenseItem>>{
+        return repository.getAllDataFromSelectedMonth(date)
     }
 
     fun getTotalAmountByMonthLive(date: String): LiveData<Double>{

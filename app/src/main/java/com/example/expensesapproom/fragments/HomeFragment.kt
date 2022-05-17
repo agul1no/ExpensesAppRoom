@@ -1,6 +1,5 @@
 package com.example.expensesapproom.fragments
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
@@ -42,8 +41,6 @@ class HomeFragment : Fragment(), ExpenseItemAdapter.OnItemCLickListener {
     private var year = myCalender.get(Calendar.YEAR)
     private var month = myCalender.get(Calendar.MONTH)
 
-    private var totalAmount : Double = 0.0
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -62,7 +59,7 @@ class HomeFragment : Fragment(), ExpenseItemAdapter.OnItemCLickListener {
         }
 
         binding.tvLimit.setOnClickListener {
-            showUpdateLimitDialogAndSetSharedPref()
+            showUpdateLimitDialog()
         }
 
         expenseViewModel = ViewModelProvider(requireActivity(),ExpenseViewModelFactory(requireActivity().application)).get(ExpenseViewModel::class.java)
@@ -79,9 +76,6 @@ class HomeFragment : Fragment(), ExpenseItemAdapter.OnItemCLickListener {
         itemTouchHelper.attachToRecyclerView(recyclerView)
 
         creatingTheDataForTheSpinner()
-//        val spinnerList = TransformingDateUtil.creatingDataForTheSpinner(month,year)
-//        val arrayAdapter = ArrayAdapter(requireActivity(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,spinnerList)
-//        binding.spinnerHomeFragment.adapter = arrayAdapter
 
         //reading the info from spinner
         binding.spinnerHomeFragment.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
@@ -89,31 +83,23 @@ class HomeFragment : Fragment(), ExpenseItemAdapter.OnItemCLickListener {
 
                 itemSelectedOnSpinner = adapterView?.getItemAtPosition(position).toString()
                 itemSelectedOnSpinner = TransformingDateUtil.transformingSpinnerInputToDate(itemSelectedOnSpinner)
-                //Log.d("itemSelectedOnSpinner", itemSelectedOnSpinner)
-                searchDatabaseWithSpinnerInput(itemSelectedOnSpinner)
+
                 val query = "%$itemSelectedOnSpinner%"
                 expenseViewModel.getTotalAmountByMonthLive(query).observe(viewLifecycleOwner, Observer { sum ->
-                    if (sum == null) {
-                        binding.tvTotal.text = "Total : 0 €"
-                        settingPercent(itemSelectedOnSpinner)
-                        binding.rvHomeFragment.visibility = View.GONE
-                        binding.tvNoData.visibility = View.VISIBLE
+                    if (sum == null){
+                        settingTotal(0.0)
+                    }else{
+                        settingTotal(sum)
                     }
-                    else {
-                        binding.tvTotal.text = "Total: $sum €"
-                        settingPercent(itemSelectedOnSpinner)
-                        binding.rvHomeFragment.visibility = View.VISIBLE
-                        binding.tvNoData.visibility = View.GONE
-                    }
+                })
+                expenseViewModel.getAllDataFromSelectedMonth(query).observe(viewLifecycleOwner, Observer { expenseItemList->
+                    adapter.setData(expenseItemList)
                 })
             }
             override fun onNothingSelected(adapterView: AdapterView<*>?) {
                 // left empty because it is not going to be used or needed
             }
         }
-
-        expenseViewModel.getAllData().observe(viewLifecycleOwner, Observer { expenseItem ->
-            adapter.setData(expenseItem) })
 
         return binding.root
     }
@@ -176,75 +162,77 @@ class HomeFragment : Fragment(), ExpenseItemAdapter.OnItemCLickListener {
         return sharedPref.edit()
     }
 
-    private fun showUpdateLimitDialogAndSetSharedPref() {
+    private fun showUpdateLimitDialog() {
         val maxAmountDialog = Dialog(requireContext(),R.style.Theme_Dialog)
         maxAmountDialog.setCancelable(false)
         maxAmountDialog.setContentView(R.layout.dialog_maxamount)
-        val etAmount = maxAmountDialog.findViewById<EditText>(R.id.etAmountUpdate)
         val updateButton = maxAmountDialog.findViewById<Button>(R.id.updateButton)
         val cancelButton = maxAmountDialog.findViewById<Button>(R.id.cancelButton)
         maxAmountDialog.show()
-        //sharedPref Limit Account
-        val sharedPref = requireActivity().getSharedPreferences("limitAmount", Context.MODE_PRIVATE)
-        val editor = sharedPref.edit()
-        var limitAmount: Int
+
+        val editor = editingSharedPref()
 
         cancelButton.setOnClickListener {
             maxAmountDialog.dismiss()
         }
         updateButton.setOnClickListener {
-            try{
-                limitAmount = etAmount.text.toString().toInt()
-                if(limitAmount < 100){
-                    limitAmount = 100
-                    throw NumberFormatException()
-                }
-                binding.tvLimit.text = "Limit: $limitAmount €"
-                etAmount.text.clear()
-                settingPercent(itemSelectedOnSpinner)
-                editor.apply {
-                    putInt("limitAmount", limitAmount)
-                    apply()
-                }
-                maxAmountDialog.dismiss()
-            }catch (e: NumberFormatException){
-                Toast.makeText(requireContext(), "Amount must be bigger than 100 €", Toast.LENGTH_SHORT).show()
+            updateButtonAction(itemSelectedOnSpinner, editor, maxAmountDialog)
+        }
+    }
+
+    private fun updateButtonAction(itemSelectedOnSpinner: String, editor: SharedPreferences.Editor, maxAmountDialog: Dialog){
+        try{
+            val etAmount = maxAmountDialog.findViewById<EditText>(R.id.etAmountUpdate)
+            val limitAmount = etAmount.text.toString().toInt()
+            if(limitAmount < 100){
+                throw NumberFormatException()
             }
+            val query = "%$itemSelectedOnSpinner%"
+            expenseViewModel.getTotalAmountByMonthLive(query).observe(viewLifecycleOwner, Observer { sum ->
+                if (sum == null){
+                    settingTotal(0.0)
+                }else{
+                    settingTotal(sum)
+                }
+            })
+            binding.tvLimit.text = "Limit: $limitAmount €"
+            etAmount.text.clear()
+            editor.apply {
+                putInt("limitAmount", limitAmount)
+                apply()
+            }
+            maxAmountDialog.dismiss()
+        }catch (e: NumberFormatException){
+            Toast.makeText(requireContext(), "Amount must be bigger than 100 €", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun settingTotal(total: Double){
+        if (total == 0.0) {
+            binding.tvTotal.text = "Total : 0 €"
+            settingPercent(itemSelectedOnSpinner)
+            binding.rvHomeFragment.visibility = View.GONE
+            binding.tvNoData.visibility = View.VISIBLE
+        }
+        else {
+            binding.tvTotal.text = "Total: $total €"
+            settingPercent(itemSelectedOnSpinner)
+            binding.rvHomeFragment.visibility = View.VISIBLE
+            binding.tvNoData.visibility = View.GONE
         }
     }
 
     private fun settingPercent(date: String) {
-        val sharedPref = requireActivity().getSharedPreferences("limitAmount", Context.MODE_PRIVATE)
-        var limitAmount = sharedPref.getInt("limitAmount", 1000)
+        val limitAmount = initializingSharedPref()
         val query = "%$date%"
-        val total = expenseViewModel.getTotalAmountByMonth(query)
-        val percentage: Int = ((total / limitAmount) * 100).roundToInt()
-        binding.tvPercent.text = "$percentage %"
-        binding.progressBar.progress = percentage
-    }
-
-    @SuppressLint("FragmentLiveDataObserve")
-    private fun calculateSumFromSelectedMonth (itemSelectedOnSpinner: String) : Double {
-        expenseViewModel = ViewModelProvider(requireActivity(),ExpenseViewModelFactory(requireActivity().application)).get(ExpenseViewModel::class.java)
-        var date = "%$itemSelectedOnSpinner%"
-        var total = 0.0
-        expenseViewModel.getAllTheAmountsFromSelectedMonth(date).observe(this) { list ->
-            //totalAmount = list.sum()
-            for (item in list) {
-                total += item
-                totalAmount = total
+        expenseViewModel.getTotalAmountByMonthLive(query).observe(viewLifecycleOwner, Observer { total->
+            if (total == null){
+                binding.tvPercent.text = "0 %"
+                binding.progressBar.progress = 0
+            }else{
+                binding.tvPercent.text = "${((total / limitAmount) * 100).roundToInt()} %"
+                binding.progressBar.progress = ((total / limitAmount) * 100).roundToInt()
             }
-            binding.tvTotal.text = "Total: $total €"
-        }
-        return totalAmount
-    }
-
-    private fun searchDatabaseWithSpinnerInput (itemSelectedOnSpinner: String) {
-        var date = "%$itemSelectedOnSpinner%"
-        expenseViewModel.getAllDataFromSelectedMonth2(date).observe(this) { list ->
-            list.let {
-                adapter.setData(it)
-                }
-        }
+        })
     }
 }
