@@ -1,38 +1,24 @@
 package com.example.expensesapproom
 
-import android.content.Context
-import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
-import android.view.*
-import android.widget.Toast
+import android.view.Menu
+import android.view.View
 import androidx.annotation.RequiresApi
-import androidx.fragment.app.FragmentManager
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.expensesapproom.databinding.ActivityMainBinding
-import com.example.expensesapproom.fragments.DashboardFragment
-import com.example.expensesapproom.fragments.HomeFragment
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import java.lang.IllegalArgumentException
-import java.lang.NullPointerException
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
+
+    private var navDestination: NavDestination? = null
 
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,10 +38,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 binding.bottomNavigationView.visibility = View.VISIBLE
             }
-
-            if(nd.id == R.id.homeFragment && nd.id == R.id.dashboardFragment && nd.id == R.id.searchFragment){
-                onBackPressed()
-            }
+            navDestination = nd
         }
 
         //it hides the status bar
@@ -69,8 +52,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
+        when(navDestination?.id){
+            R.id.homeFragment -> { finish() }
+            R.id.dashboardFragment -> { finish() }
+            R.id.searchFragment -> { finish() }
+        }
         super.onBackPressed()
-        finish()
     }
 
 }
