@@ -24,6 +24,7 @@ import com.example.expensesapproom.data.viewmodelfactory.ExpenseViewModelFactory
 import com.example.expensesapproom.databinding.FragmentHomeBinding
 import com.example.expensesapproom.expenseitemadapter.ExpenseItemAdapter
 import com.example.expensesapproom.utils.TransformingDateUtil
+import com.google.android.material.appbar.AppBarLayout
 import java.util.*
 import kotlin.math.roundToInt
 
@@ -51,6 +52,29 @@ class HomeFragment : Fragment(), ExpenseItemAdapter.OnItemCLickListener {
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentHomeBinding.inflate(inflater,container,false)
+
+        binding.appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+
+            binding.container.translationY =
+                -verticalOffset.toFloat() // Un-slide the image or container from views
+
+            val percent =
+                (Math.abs(verticalOffset)).toFloat() / appBarLayout?.totalScrollRange!! // 0F to 1F
+
+            // Control container opacity according to offset
+            binding.container.alpha = 1F - percent
+
+            binding.container.scaleY = (1F - percent) + percent / 1.199F
+            binding.container.scaleX = (1F - percent) + percent / 1.199F
+
+        })
+
+        binding.collapsingToolbar.isTitleEnabled = true
+        binding.collapsingToolbar.title = "Home"
+        binding.collapsingToolbar.titleCollapseMode = 0
+        binding.collapsingToolbar.expandedTitleMarginStart = 40
+        binding.collapsingToolbar.expandedTitleMarginBottom = 600
+
 
         val limitAmount = initializingSharedPref()
         binding.tvLimit.text = "Limit: $limitAmount €"

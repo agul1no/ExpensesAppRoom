@@ -11,6 +11,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.expensesapproom.R
@@ -60,22 +61,10 @@ class DashboardFragment : Fragment() {
         }
 
         //Creating LineChart
-        val dataXAxis: List<String?> = creatingDataForTheXAxis().reversed()  // Apr / 22, Mar / 22, Feb / 22, Jan / 22, Dec / 21
-        val dataYAxis: List<Float> = creatingDataForTheYAxis()
+        val dataXAxis: List<String?> = createDataForTheXAxis().reversed()  // Apr / 22, Mar / 22, Feb / 22, Jan / 22, Dec / 21
+        val dataYAxis: List<Float> = createDataForTheYAxis()
 
-        val monthlyData = mutableListOf<Entry>()
-        monthlyData.add(Entry(0f,dataYAxis[0])) // 9 Months ago
-        monthlyData.add(Entry(1f,dataYAxis[1])) // 8 Months ago
-        monthlyData.add(Entry(2f,dataYAxis[2])) // etc..
-        monthlyData.add(Entry(3f,dataYAxis[3]))
-        monthlyData.add(Entry(4f,dataYAxis[4]))
-        monthlyData.add(Entry(5f,dataYAxis[5]))
-        monthlyData.add(Entry(6f,dataYAxis[6]))
-        monthlyData.add(Entry(7f,dataYAxis[7]))
-        monthlyData.add(Entry(8f,dataYAxis[8]))
-        monthlyData.add(Entry(9f,dataYAxis[9]))
-
-        val lineDataSet = LineDataSet(monthlyData, "monthly Overview")
+        val lineDataSet = createMonthlyDataLineChart(dataYAxis)
         val _lineDataSet = MutableLiveData(lineDataSet)
 
         _lineDataSet.value = lineDataSet
@@ -89,44 +78,12 @@ class DashboardFragment : Fragment() {
             mode = LineDataSet.Mode.HORIZONTAL_BEZIER
         }
 
-        var color = Color.BLACK
-        when (context?.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
-            Configuration.UI_MODE_NIGHT_YES -> {color = Color.WHITE}
-            Configuration.UI_MODE_NIGHT_NO -> {color = Color.BLACK}
-            Configuration.UI_MODE_NIGHT_UNDEFINED -> {Color.RED}
-        }
-
-        if(dataYAxis.sum() == 0.0f){
-            binding.lineChart.axisLeft.axisMaximum = 500f
-            binding.lineChart.axisLeft.axisMinimum = 0f
-        }
-
         binding.lineChart.data = LineData(_lineDataSet.value)
-        binding.lineChart.apply {
-            invalidate()
-            axisRight.isEnabled = false
-            xAxis.isGranularityEnabled = true
-            xAxis.granularity = 0f
-            xAxis.setDrawGridLines(false)
-            xAxis.position = XAxis.XAxisPosition.BOTTOM
-            xAxis.valueFormatter = IndexAxisValueFormatter(dataXAxis)
-            xAxis.textColor = color
-            xAxis.axisLineColor = color
-            animateX(500)
-            axisLeft.setDrawGridLines(false)
-            axisLeft.axisLineColor = color
-            axisLeft.textColor = color
-            setTouchEnabled(false)
-            isDragEnabled = false
-            setScaleEnabled(false)
-            setPinchZoom(false)
-            description = null
-            legend.isEnabled = false
-        }
+        setPropertiesLineChart(dataXAxis, dataYAxis)
 
         //creating and setting the data for the spinner Pie Chart
-        var spinnerList = TransformingDateUtil.creatingDataForTheSpinner(month,year)
-        var arrayAdapter = ArrayAdapter(requireActivity(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,spinnerList)
+        val spinnerList = TransformingDateUtil.creatingDataForTheSpinner(month,year)
+        val arrayAdapter = ArrayAdapter(requireActivity(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,spinnerList)
         binding.spinnerDashboard.adapter = arrayAdapter
 
         //reading the info from spinner
@@ -135,42 +92,22 @@ class DashboardFragment : Fragment() {
 
                 itemSelectedOnSpinner = adapterView?.getItemAtPosition(position).toString()
                 itemSelectedOnSpinner = TransformingDateUtil.transformingSpinnerInputToDate(itemSelectedOnSpinner)
+
+                val queryDate = "%${itemSelectedOnSpinner}%"
+                expenseViewModel.getTotalAmountByMonthLive(queryDate).observe(viewLifecycleOwner, Observer { sum ->
+                    binding.tvTotalSelectedMonth.text = "Total: $sum €"
+                })
+
                 val pieDataSet = updatingPieChartByChangingSpinner()
                 val _pieDataSet = MutableLiveData(pieDataSet)
                 val colorList = mutableListOf<Int>(Color.RED, Color.YELLOW, Color.CYAN, Color.GREEN, Color.MAGENTA, Color.LTGRAY)
                 pieDataSet.colors = colorList
                 _pieDataSet.value = pieDataSet
 
-                binding.pieChart.setEntryLabelTextSize(20f)
-                binding.pieChart.setDrawEntryLabels(false)
-                //binding.pieChart.setEntryLabelColor(Color.TRANSPARENT)
                 pieDataSet.valueTextSize = 16f
-                binding.pieChart.holeRadius = 45f
-                binding.pieChart.transparentCircleRadius = 45f
-                binding.pieChart.setHoleColor(Color.TRANSPARENT)
-                binding.pieChart.centerText = "Categories"
-                binding.pieChart.setCenterTextSize(20f)
-                binding.pieChart.isDragDecelerationEnabled = false
-                binding.pieChart.setTouchEnabled(false)
                 pieDataSet.valueFormatter = PercentFormatter(pieChart)
-                binding.pieChart.setUsePercentValues(true)
-                binding.pieChart.animateY(500)
 
-                binding.pieChart.description.isEnabled = false
-                binding.pieChart.legend.textSize = 15f
-                when (context?.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
-                    Configuration.UI_MODE_NIGHT_YES -> {binding.pieChart.legend.textColor =  Color.WHITE
-                        binding.pieChart.setCenterTextColor(Color.WHITE)}
-                    Configuration.UI_MODE_NIGHT_NO -> {binding.pieChart.legend.textColor = Color.BLACK
-                        binding.pieChart.setCenterTextColor(Color.BLACK)}
-                    Configuration.UI_MODE_NIGHT_UNDEFINED -> {binding.pieChart.legend.textColor = Color.BLACK
-                        binding.pieChart.setCenterTextColor(Color.BLACK)}
-                }
-                binding.pieChart.legend.horizontalAlignment = Legend.LegendHorizontalAlignment.CENTER
-                binding.pieChart.legend.orientation = Legend.LegendOrientation.HORIZONTAL
-                binding.pieChart.legend.isWordWrapEnabled = true
-                binding.pieChart.legend.verticalAlignment
-                binding.pieChart.legend.xEntrySpace = 20f
+                setPropertiesPieChart()
 
                 binding.pieChart.data = PieData(_pieDataSet.value)
                 binding.pieChart.invalidate()
@@ -195,13 +132,13 @@ class DashboardFragment : Fragment() {
         }
     }
 
-    private fun creatingDataForTheXAxis(): MutableList<String?>{
+    private fun createDataForTheXAxis(): MutableList<String?>{
         /** Creating the mutableListOf Month/Year **/
         val calendar = Calendar.getInstance()
         var month = (calendar.get(Calendar.MONTH)) /** January = 0, February = 1 etc... **/
         var year = calendar.get(Calendar.YEAR)
 
-        var spinnerlist = mutableListOf<String?>()
+        val spinnerlist = mutableListOf<String?>()
         for (i in 0..9){
             if(month == 0){
                 spinnerlist.add(TransformingDateUtil.transformingDateFromIntToString(month,year))
@@ -215,8 +152,8 @@ class DashboardFragment : Fragment() {
         return spinnerlist
     }
 
-    private fun creatingDataForTheYAxis(): MutableList<Float>{
-        var totalAmountListByMonth = mutableListOf<Float>()
+    private fun createDataForTheYAxis(): MutableList<Float>{
+        val totalAmountListByMonth = mutableListOf<Float>()
         val dates = createDynamicListOfMonths().reversed()
 
         for (i in 0..9){
@@ -228,7 +165,7 @@ class DashboardFragment : Fragment() {
     }
 
     private fun createDynamicListOfMonths(): MutableList<String>{
-        var monthList = mutableListOf<String>()
+        val monthList = mutableListOf<String>()
 
         val formatter = SimpleDateFormat("MM-yyyy")
         val myCalender = Calendar.getInstance()
@@ -255,12 +192,56 @@ class DashboardFragment : Fragment() {
         return monthList
     }
 
-    private fun creatingMonthlyDataLineChart(){
+    private fun createMonthlyDataLineChart(dataYAxis: List<Float>): LineDataSet {
+        val monthlyData = mutableListOf<Entry>()
+        monthlyData.add(Entry(0f, dataYAxis[0])) // 9 Months ago
+        monthlyData.add(Entry(1f, dataYAxis[1])) // 8 Months ago
+        monthlyData.add(Entry(2f, dataYAxis[2])) // etc..
+        monthlyData.add(Entry(3f, dataYAxis[3]))
+        monthlyData.add(Entry(4f, dataYAxis[4]))
+        monthlyData.add(Entry(5f, dataYAxis[5]))
+        monthlyData.add(Entry(6f, dataYAxis[6]))
+        monthlyData.add(Entry(7f, dataYAxis[7]))
+        monthlyData.add(Entry(8f, dataYAxis[8]))
+        monthlyData.add(Entry(9f, dataYAxis[9]))
 
+        return LineDataSet(monthlyData, "monthly Overview")
     }
 
-    private fun settingConfigurationLineChart(){
+    private fun setPropertiesLineChart(dataXAxis: List<String?>, dataYAxis: List<Float>){
+        var color = Color.BLACK
+        when (context?.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+            Configuration.UI_MODE_NIGHT_YES -> {color = Color.WHITE}
+            Configuration.UI_MODE_NIGHT_NO -> {color = Color.BLACK}
+            Configuration.UI_MODE_NIGHT_UNDEFINED -> {Color.RED}
+        }
 
+        if(dataYAxis.sum() == 0.0f){
+            binding.lineChart.axisLeft.axisMaximum = 500f
+            binding.lineChart.axisLeft.axisMinimum = 0f
+        }
+
+        binding.lineChart.apply {
+            invalidate()
+            axisRight.isEnabled = false
+            xAxis.isGranularityEnabled = true
+            xAxis.granularity = 0f
+            xAxis.setDrawGridLines(false)
+            xAxis.position = XAxis.XAxisPosition.BOTTOM
+            xAxis.valueFormatter = IndexAxisValueFormatter(dataXAxis)
+            xAxis.textColor = color
+            xAxis.axisLineColor = color
+            animateX(500)
+            axisLeft.setDrawGridLines(false)
+            axisLeft.axisLineColor = color
+            axisLeft.textColor = color
+            setTouchEnabled(false)
+            isDragEnabled = false
+            setScaleEnabled(false)
+            setPinchZoom(false)
+            description = null
+            legend.isEnabled = false
+        }
     }
 
     private fun updatingPieChartByChangingSpinner(): PieDataSet{
@@ -290,6 +271,40 @@ class DashboardFragment : Fragment() {
 
     private fun creatingListOfCategories(): List<String> {
         return listOf("Rent", "Grocery Shopping", "Restaurant", "Entertainment", "Clothes", "Petrol")
+    }
+
+    private fun setPropertiesPieChart(){
+        binding.pieChart.setEntryLabelTextSize(20f)
+        binding.pieChart.setDrawEntryLabels(false)
+        //binding.pieChart.setEntryLabelColor(Color.TRANSPARENT)
+        binding.pieChart.holeRadius = 45f
+        binding.pieChart.transparentCircleRadius = 45f
+        binding.pieChart.setHoleColor(Color.TRANSPARENT)
+        binding.pieChart.centerText = "Categories"
+        binding.pieChart.setCenterTextSize(20f)
+        binding.pieChart.isDragDecelerationEnabled = false
+        binding.pieChart.setTouchEnabled(false)
+        binding.pieChart.setUsePercentValues(true)
+        binding.pieChart.animateY(500)
+        binding.pieChart.description.isEnabled = false
+
+        when (context?.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+            Configuration.UI_MODE_NIGHT_YES -> {binding.pieChart.legend.textColor =  Color.WHITE
+                binding.pieChart.setCenterTextColor(Color.WHITE)
+                binding.tvTotalSelectedMonth.setTextColor(Color.WHITE)}
+            Configuration.UI_MODE_NIGHT_NO -> {binding.pieChart.legend.textColor = Color.BLACK
+                binding.pieChart.setCenterTextColor(Color.BLACK)
+                binding.tvTotalSelectedMonth.setTextColor(Color.BLACK)}
+            Configuration.UI_MODE_NIGHT_UNDEFINED -> {binding.pieChart.legend.textColor = Color.BLACK
+                binding.pieChart.setCenterTextColor(Color.BLACK)
+                binding.tvTotalSelectedMonth.setTextColor(Color.BLACK)}
+        }
+        binding.pieChart.legend.textSize = 15f
+        binding.pieChart.legend.horizontalAlignment = Legend.LegendHorizontalAlignment.CENTER
+        binding.pieChart.legend.orientation = Legend.LegendOrientation.HORIZONTAL
+        binding.pieChart.legend.isWordWrapEnabled = true
+        binding.pieChart.legend.verticalAlignment
+        binding.pieChart.legend.xEntrySpace = 20f
     }
 
 }

@@ -11,24 +11,43 @@
         android:id="@+id/appBarLayout"
         style="@style/Theme.AppCompat.DayNight.DarkActionBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:menu="@menu/homefragment_top_menu">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/collapsingToolbar"
             android:layout_width="match_parent"
             android:layout_height="280dp"
             android:fitsSystemWindows="true"
             android:padding="5dp"
             app:contentScrim="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|enterAlways"
-            app:toolbarId="@id/toolbarSearchFragment">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+            app:menu="@menu/homefragment_top_menu"
+            app:titleCollapseMode="fade">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbarHomeFragment"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:collapseIcon="@drawable/ic_add_box"
+                app:layout_collapseMode="pin"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:menu="@menu/homefragment_top_menu"
+                app:popupTheme="@style/Theme.AppCompat.Light">
+
+            </androidx.appcompat.widget.Toolbar>
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/cardView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:cardCornerRadius="10dp"
                 app:layout_collapseMode="parallax">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/container"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
@@ -79,10 +98,10 @@
                         android:id="@+id/tvLimit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginBottom="8dp"
                         android:text="Limit: 1000 €"
                         android:textSize="18sp"
-                        android:layout_marginBottom="8dp"
-                        android:layout_marginLeft="10dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent">
 
@@ -97,23 +116,22 @@
 
                     </Spinner>
 
-                    <androidx.appcompat.widget.Toolbar
-                        android:id="@+id/toolbarHomeFragment"
-                        android:layout_width="match_parent"
-                        android:layout_height="?attr/actionBarSize"
-                        app:layout_collapseMode="pin"
+                    <ImageView
+                        android:id="@+id/ivAddIcon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_add_box"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:menu="@menu/homefragment_top_menu"
-                        app:popupTheme="@style/Theme.AppCompat.Light">
+                        android:layout_marginTop="12dp"
+                        android:layout_marginEnd="8dp"/>
 
-                    </androidx.appcompat.widget.Toolbar>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
 
             </androidx.cardview.widget.CardView>
+
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
@@ -135,11 +153,11 @@
         android:id="@+id/tvNoData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No data to display in the selected month"
-        android:gravity="center"
-        android:visibility="gone"
         android:layout_gravity="center"
-        android:textSize="20sp">
+        android:gravity="center"
+        android:text="No data to display in the selected month"
+        android:textSize="20sp"
+        android:visibility="gone">
 
     </TextView>
 
