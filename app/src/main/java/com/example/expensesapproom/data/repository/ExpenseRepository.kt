@@ -1,6 +1,5 @@
 package com.example.expensesapproom.data.repository
 
-import android.app.DownloadManager
 import androidx.lifecycle.LiveData
 import com.example.expensesapproom.data.db.ExpenseDao
 import com.example.expensesapproom.data.entities.ExpenseItem
@@ -26,16 +25,12 @@ class ExpenseRepository (private val expenseDao: ExpenseDao) {
         return expenseDao.getAllData()
     }
 
-    fun findAExpenseByName(query: String): LiveData<List<ExpenseItem>>{
-        return expenseDao.findAExpenseByName(query)
+    fun findAExpenseByNameDateOrAmount(query: String): LiveData<List<ExpenseItem>>{
+        return expenseDao.findAExpenseByNameDateOrAmount(query)
     }
 
-    fun getAllDataFromSelectedMonth2(date:String): LiveData<List<ExpenseItem>>{
-        return expenseDao.getAllDataFromSelectedMonth2(date)
-    }
-
-    fun getAllTheAmountsFromSelectedMonth(date: String): LiveData<List<Double>>{
-        return expenseDao.getAllTheAmountsFromSelectedMonth(date)
+    fun getAllDataFromSelectedMonth(date:String): LiveData<List<ExpenseItem>>{
+        return expenseDao.getAllDataFromSelectedMonth(date)
     }
 
     fun getTotalAmountByMonthLive(date: String): LiveData<Double>{
@@ -44,5 +39,8 @@ class ExpenseRepository (private val expenseDao: ExpenseDao) {
 
     fun getTotalAmountByMonth(date: String): Double{
         return expenseDao.getTotalAmountByMonth(date)
+    }
+    fun getTotalAmountByCategoryAndDate(category: String, date: String): Double{
+        return expenseDao.getTotalAmountByCategoryAndDate(category, date)
     }
 }

@@ -3,25 +3,19 @@ package com.example.expensesapproom.fragments
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.DialogInterface
-import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.example.expensesapproom.MainActivity
 import com.example.expensesapproom.R
 import com.example.expensesapproom.data.entities.ExpenseItem
 import com.example.expensesapproom.data.viewmodel.ExpenseViewModel
 import com.example.expensesapproom.databinding.FragmentAddBinding
-import com.example.expensesapproom.databinding.FragmentSearchBinding
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.android.synthetic.main.fragment_add.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -29,8 +23,9 @@ class AddFragment : Fragment() {
 
     private var _binding: FragmentAddBinding? = null
     private val binding get() = _binding!!
+
     private lateinit var expenseViewModel: ExpenseViewModel
-    //private lateinit var dateForDatabase: String
+
     private lateinit var selectedCategory: String
 
     override fun onCreateView(
@@ -106,7 +101,7 @@ class AddFragment : Fragment() {
             val alertDialogBuilder = AlertDialog.Builder(requireContext())
             //alertDialogBuilder.setTitle("Fill out following fields")
             alertDialogBuilder.setMessage(message)
-            alertDialogBuilder.setPositiveButton("Yes", DialogInterface.OnClickListener { dialogInterface, i ->
+            alertDialogBuilder.setPositiveButton("Ok", DialogInterface.OnClickListener { dialogInterface, i ->
                 dialogInterface.dismiss()
             })
             alertDialogBuilder.show()

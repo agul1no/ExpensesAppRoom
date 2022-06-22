@@ -3,7 +3,6 @@ package com.example.expensesapproom.data.db
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.example.expensesapproom.data.entities.ExpenseItem
-import java.util.concurrent.Flow
 
 @Dao
 interface ExpenseDao {
@@ -20,15 +19,11 @@ interface ExpenseDao {
     @Query ("SELECT * FROM expenses_table ORDER BY id ASC")
     fun getAllData(): LiveData<List<ExpenseItem>>
 
-
     @Query ("SELECT * FROM expenses_table WHERE expense_name LIKE :query OR expense_date LIKE :query OR expense_amount LIKE :query")
-    fun findAExpenseByName(query: String): LiveData<List<ExpenseItem>>
+    fun findAExpenseByNameDateOrAmount(query: String): LiveData<List<ExpenseItem>>
 
     @Query ("SELECT * FROM expenses_table WHERE expense_date LIKE :date ORDER BY id DESC")
-    fun getAllDataFromSelectedMonth2(date:String): LiveData<List<ExpenseItem>>
-
-    @Query ("SELECT expense_amount FROM expenses_table WHERE expense_date LIKE :date")
-    fun getAllTheAmountsFromSelectedMonth(date: String): LiveData<List<Double>>
+    fun getAllDataFromSelectedMonth(date:String): LiveData<List<ExpenseItem>>
 
     @Query ("SELECT expense_amount FROM expenses_table WHERE expense_date LIKE :date")
     fun getAllTheAmountsFromSelectedMonth2(date: String): List<Double>
@@ -38,4 +33,7 @@ interface ExpenseDao {
 
     @Query ("SELECT SUM(expense_amount) FROM expenses_table WHERE expense_date LIKE :date")
     fun getTotalAmountByMonth(date:String): Double
+
+    @Query("SELECT SUM(expense_amount) FROM expenses_table WHERE expense_category LIKE :category AND expense_date LIKE :date")
+    fun getTotalAmountByCategoryAndDate(category: String, date: String): Double
 }

@@ -8,14 +8,14 @@
 
     <ImageView
         android:id="@+id/ivThirdScreen"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:src="@mipmap/confetti"
-        android:layout_marginTop="50dp"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:src="@mipmap/add_fragment_image"
         app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/tvTitle3" />
 
     <TextView
         android:id="@+id/tvTitle3"
@@ -25,11 +25,11 @@
         android:textColor="?attr/colorPrimary"
         android:textSize="46sp"
         android:textStyle="bold"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="40dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivThirdScreen" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tvText3"
@@ -45,7 +45,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvTitle3" />
+        app:layout_constraintTop_toBottomOf="@+id/ivThirdScreen" />
 
     <TextView
         android:id="@+id/finishButton"

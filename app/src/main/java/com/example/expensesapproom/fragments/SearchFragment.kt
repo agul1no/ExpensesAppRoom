@@ -3,26 +3,17 @@ package com.example.expensesapproom.fragments
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SearchView
-import androidx.core.view.size
-import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.setupWithNavController
-import androidx.recyclerview.widget.RecyclerView
 import com.example.expensesapproom.R
 import com.example.expensesapproom.data.viewmodel.ExpenseViewModel
 import com.example.expensesapproom.data.viewmodelfactory.ExpenseViewModelFactory
-import com.example.expensesapproom.databinding.FragmentDashboardBinding
-import com.example.expensesapproom.databinding.FragmentHomeBinding
 import com.example.expensesapproom.databinding.FragmentSearchBinding
 import com.example.expensesapproom.expenseitemadapter.ExpenseItemAdapter
-import kotlinx.android.synthetic.main.fragment_home.*
-import kotlinx.android.synthetic.main.fragment_search.*
 
 class SearchFragment : Fragment(), ExpenseItemAdapter.OnItemCLickListener {
 
@@ -90,9 +81,11 @@ class SearchFragment : Fragment(), ExpenseItemAdapter.OnItemCLickListener {
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // left empty because it is not going to be used or needed
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // left empty because it is not going to be used or needed
             }
         })
 
@@ -108,7 +101,7 @@ class SearchFragment : Fragment(), ExpenseItemAdapter.OnItemCLickListener {
     }
 
     override fun onItemCLick(position: Int) {
-
+        // left empty because it is not going to be used or needed
     }
 
     override fun onStart() {
@@ -123,7 +116,7 @@ class SearchFragment : Fragment(), ExpenseItemAdapter.OnItemCLickListener {
     private fun searchDatabase(query: String){
         val searchQuery = "%$query%"
 
-        expenseViewModel.findAExpenseByName(searchQuery).observe(this) { list ->
+        expenseViewModel.findAExpenseByNameDateOrAmount(searchQuery).observe(this) { list ->
             list.let {
                 adapter.setData(it)
             }
