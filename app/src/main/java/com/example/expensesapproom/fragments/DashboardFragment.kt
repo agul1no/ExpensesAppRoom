@@ -270,7 +270,7 @@ class DashboardFragment : Fragment() {
     }
 
     private fun creatingListOfCategories(): List<String> {
-        return listOf("Rent", "Grocery Shopping", "Restaurant", "Entertainment", "Clothes", "Petrol")
+        return listOf("Grocery Shopping", "Entertainment", "Rent", "Clothes", "Petrol", "Restaurant")
     }
 
     private fun setPropertiesPieChart(){

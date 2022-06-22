@@ -1,26 +1,22 @@
 package com.example.expensesapproom.fragments
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.DialogInterface
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavArgs
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.expensesapproom.R
 import com.example.expensesapproom.data.entities.ExpenseItem
 import com.example.expensesapproom.data.viewmodel.ExpenseViewModel
-import com.example.expensesapproom.databinding.FragmentHomeBinding
 import com.example.expensesapproom.databinding.FragmentUpdateBinding
-import kotlinx.android.synthetic.main.fragment_update.*
 import java.text.SimpleDateFormat
 import java.util.*
 
