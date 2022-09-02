@@ -1,6 +1,6 @@
 # ExpensesAppRoom
 
-<img src="https://github.com/agul1no/ExpensesAppRoom/blob/master/Endmockup.png" width="1000" height="600" />
+<img src="https://github.com/agul1no/ExpensesAppRoom/blob/master/Endmockup.png" width="1000" height="560" />
 
 This is the final version of the Expenses App that uses the Room persistence library, Navigation Component and some other third party libraries. It was implemented inspired 
 on the MVVM Architecture. With this mobile Application you can put together all your expenses, have an overview how much you consume monthly and classify the expenses by
