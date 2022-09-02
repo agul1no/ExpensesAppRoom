@@ -1,6 +1,6 @@
 # ExpensesAppRoom
 
-<img src="https://github.com/agul1no/ExpensesAppRoom/blob/master/Endmockup.png" width="1000" height="550" />
+<img src="https://github.com/agul1no/ExpensesAppRoom/blob/master/Endmockup.png" width="1000" height="450" />
 
 This is the final version of the Expenses App that I've been developing for learning purposes.
 This Application uses the Room persistence library, Navigation Component and some other third party libraries. It was implemented inspired 
